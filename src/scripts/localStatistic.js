@@ -15,6 +15,9 @@ export function setLocalStatistic(score) {
 export function getLocalStatistic() {
   getTenLastGames();
   getTopScore();
+  document.querySelector(".local-games-full").classList.toggle("hide", !topRecord);
+  document.querySelector(".local-games-empty").classList.toggle("hide", topRecord);
+  if (!topRecord) return;
   fillTopLocalScore();
   fillTable(localStatisticTable, lastGames);
 }
@@ -22,6 +25,7 @@ export function getLocalStatistic() {
 function getTenLastGames() {
   lastGames = window.localStorage.getItem("lastGames");
   lastGames = JSON.parse(lastGames) || [];
+
 }
 
 function setTenLastGames(currentGameStatistic) {

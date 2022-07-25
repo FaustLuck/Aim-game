@@ -11,9 +11,18 @@ export default {
   output: {
     filename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "docs"),
-    publicPath: "./",
+    publicPath: isProd ? "./" : "",
     clean: true,
     assetModuleFilename: "assets/[hash][ext][query]"
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "src"),
+      watch: true,
+    }
+  },
+  stats: {
+    children: true
   },
   devtool: "source-map",
   mode,
@@ -71,7 +80,6 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/index.html",
-      filename: "index.html",
       scriptLoading: "module"
     }),
     new MiniCssExtractPlugin({

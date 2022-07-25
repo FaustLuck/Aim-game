@@ -20,6 +20,7 @@ const dbRef = ref(realtime, "aim-statistic");
 
 const globalStatisticTable = document.querySelector(".global-games").querySelector("tbody");
 const congratulationWindow = document.querySelector(".congratulation.screen-popup");
+const inputName = congratulationWindow.querySelector(".top-name");
 const infoBlock = congratulationWindow.querySelector(".info");
 const refusalBlock = congratulationWindow.querySelector(".refusal");
 const spinner = congratulationWindow.querySelector(".waiting");
@@ -28,13 +29,23 @@ const placeInfo = congratulationWindow.querySelector(".place");
 
 let agreement, index, currentScore;
 let globalStatistic = getGlobalStatistic();
-congratulationWindow.addEventListener("click", getConsent);
+inputName.addEventListener("input", nameIsEmpty);
 
 export function findGlobalPlace(score) {
   currentScore = score;
   index = globalStatistic.findIndex(el => el.score < currentScore);
   if (index > -1) showCongratulation(index + 1);
 }
+
+function nameIsEmpty() {
+  let value = inputName.value.trim();
+  let submitButton = congratulationWindow.querySelector(`.agree-btn[data-agree="true"]`);
+  submitButton.classList.toggle("disabled", value.length === 0);
+  (value.length) ?
+    congratulationWindow.addEventListener("click", getConsent) :
+    congratulationWindow.removeEventListener("click", getConsent);
+}
+
 
 async function setGlobalStatistic(player) {
   globalStatistic.splice(index, 0, {
@@ -67,7 +78,7 @@ function hideCongratulation() {
   });
 }
 
-export async function getGlobalStatistic() {
+async function getGlobalStatistic() {
   let snapshot = await get(dbRef);
   if (snapshot.exists()) {
     globalStatistic = await snapshot.val();
@@ -75,7 +86,9 @@ export async function getGlobalStatistic() {
   fillTable(globalStatisticTable, globalStatistic);
 }
 
-export async function getConsent(e) {
+async function getConsent(e) {
+  let bucketValue = document.querySelector(".bucket").value;
+  if (!bucketValue) return;
   if (!e.target.classList.contains("agree-btn")) return;
   agreement = e.target.getAttribute("data-agree") === "true";
   const player = congratulationWindow.querySelector(".top-name").value.trim();

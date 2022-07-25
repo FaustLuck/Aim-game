@@ -128,6 +128,8 @@ function createMiniBoard(board, size, circle) {
 
 //todo сделать чтобы они располагались по кругу, а не кучкой
 //todo чтобы уменьшались в свой центр, а не левый верхний угол
+//todo расположить кружочки по окружности
+//todo отказаться от getClientBoundingRect()?
 
 function createMiniCircles(miniBoard, size) {
   let countMiniCircles = getRandomNumber(3, 10);
