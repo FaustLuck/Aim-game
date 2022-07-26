@@ -24,7 +24,8 @@ export default {
   stats: {
     children: true
   },
-  devtool: "source-map",
+  ...(!isProd && { devtool: "source-map" }),
+//  devtool: "source-map",
   mode,
   optimization: {
     splitChunks: {
@@ -83,7 +84,7 @@ export default {
       scriptLoading: "module"
     }),
     new MiniCssExtractPlugin({
-      filename: "[name].[contenthash].css",
+      filename: "style.[contenthash].css",
     })
   ]
 };

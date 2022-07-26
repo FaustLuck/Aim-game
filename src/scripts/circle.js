@@ -1,9 +1,19 @@
 export let timerCircle;
 
+/**
+ * Возвращает случайное целое число из заданного интервала
+ * @param min минимальное значение
+ * @param max максимальное значение
+ * @returns {number} случайное число
+ */
 function getRandomNumber(min, max) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
+/**
+ * Генерирует случайный цвет в формате rgb(red,green,blue)
+ * @returns {string} строка rgb для css свойства background-color
+ */
 function getRandomColor() {
   let r = getRandomNumber(0, 255);
   let g = getRandomNumber(0, 255);
@@ -11,6 +21,11 @@ function getRandomColor() {
   return `rgb(${ r }, ${ g }, ${ b })`;
 }
 
+/**
+ * В зависимости от выбранной сложности генерирует размер цели
+ * @param difficult
+ * @returns {number}
+ */
 function applyingDifficult(difficult) {
   switch (difficult) {
     case "easy":
@@ -24,7 +39,7 @@ function applyingDifficult(difficult) {
   }
 }
 
-function createRandomCircle(board, size) {
+function createRandomCircle(board, size, mini = false) {
   const circle = document.createElement("div");
   const { width, height } = board.getBoundingClientRect();
   const x = getRandomNumber(0, width - size);
@@ -33,8 +48,8 @@ function createRandomCircle(board, size) {
   Object.assign(circle.style, {
     width: `${ size }px`,
     height: `${ size }px`,
-    left: `${ x }px`,
     top: `${ y }px`,
+    left: mini ? `${ y }px` : `${ x }px`
   });
   circle.setAttribute("data-id", `${ Date.now() }`);
   return circle;
@@ -52,7 +67,10 @@ export function addRandomCircle(board, difficult) {
       addRandomCircle(board, difficult);
     }, 1000);
   } else {
-    createMiniBoard(board, size, circle);
+    let countMiniCircles = getRandomNumber(6, 15);
+    for (let i = 0; i < countMiniCircles; i++) {
+      createMiniBoard(board, size, circle);
+    }
   }
   board.append(circle);
 }
@@ -67,13 +85,11 @@ function getRandomGradient(size) {
     arrayColors.push({ color: getRandomColor(), position: +position.toFixed(2) });
     position += offset;
   }
-
   return { arrayColors, offset };
 }
 
 
 function applyGradient(circle, size) {
-
   let { arrayColors, offset } = getRandomGradient(size);
   moving(circle, arrayColors, offset);
   arrayColors = moveGradient(arrayColors, offset);
@@ -119,6 +135,7 @@ function createMiniBoard(board, size, circle) {
     height: circle.style.height,
     left: circle.style.left,
     top: circle.style.top,
+    transform: `rotate(${ getRandomNumber(0, 359) }deg)`
   });
   miniBoard.classList.add("mini-board");
   miniBoard.setAttribute("data-id", `${ id }`);
@@ -126,19 +143,17 @@ function createMiniBoard(board, size, circle) {
   createMiniCircles(miniBoard, size);
 }
 
-//todo сделать чтобы они располагались по кругу, а не кучкой
-//todo чтобы уменьшались в свой центр, а не левый верхний угол
-//todo расположить кружочки по окружности
-//todo отказаться от getClientBoundingRect()?
-
 function createMiniCircles(miniBoard, size) {
-  let countMiniCircles = getRandomNumber(3, 10);
   let id = miniBoard.getAttribute("data-id");
-  for (let i = 0; i < countMiniCircles; i++) {
-    let miniCircle = createRandomCircle(miniBoard, size / 5);
-    miniCircle.classList.add("circle", "mini");
-    miniCircle.style.backgroundColor = getRandomColor();
-    miniCircle.setAttribute("data-id", `${ id }`);
-    miniBoard.append(miniCircle);
-  }
+  let miniCircle = createRandomCircle(miniBoard, size / 4, true);
+  miniCircle.classList.add("circle", "mini");
+  miniCircle.style.backgroundColor = getRandomColor();
+  miniCircle.setAttribute("data-id", `${ id }`);
+  miniBoard.append(miniCircle);
+}
+
+export function moveMiniCircle(circle, delta) {
+  let x = Math.round(parseInt(circle.style.top) + delta);
+  circle.style.top = `${ x }px`;
+  circle.style.left = `${ x }px`;
 }

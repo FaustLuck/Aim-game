@@ -364,16 +364,11 @@ h1 {
   cursor: pointer;
   z-index: 2;
 
+
   &.mini {
     cursor: default;
     z-index: 1;
-    transform: scale(1);
-    transition: all 1s linear;
-
-    &.hide {
-      width: 0 !important;
-      height: 0 !important;
-    }
+    transition: transform 1s linear;
   }
 }
 

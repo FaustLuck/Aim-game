@@ -1,4 +1,4 @@
-import { addRandomCircle, timerCircle } from "./circle.js";
+import { addRandomCircle, moveMiniCircle, timerCircle } from "./circle.js";
 import { setLocalStatistic } from "./localStatistic.js";
 import { findGlobalPlace } from "./globalStatistic.js";
 import { calculateScore, overlay } from "./utils.js";
@@ -43,17 +43,18 @@ board.addEventListener("click", e => {
   let id = e.target.getAttribute("data-id");
   e.target.remove();
   if (difficult !== "nightmare") {
-    let miniBoard = board.querySelector(`.mini-board[data-id="${ id }"]`);
-    let miniCircles = miniBoard.querySelectorAll(`.circle.mini[data-id="${ id }"]`);
-    miniBoard.classList.add("show");
-    setTimeout(() => {
-      miniCircles.forEach(el => {
-        el.classList.add("hide");
+    let miniBoards = board.querySelectorAll(`.mini-board[data-id="${ id }"]`);
+    let miniCircles = board.querySelectorAll(`.circle.mini[data-id="${ id }"]`);
+    miniBoards.forEach(el => el.classList.add("show"));
+    miniCircles.forEach(el => {
+      let delta = parseInt(el.parentNode.style.width) / 100;
+      let timerMoveMiniCircle = setInterval(moveMiniCircle, 10, el, delta);
+      el.style.transform = "scale(0)";
+      el.addEventListener("transitionend", () => {
+        clearInterval(timerMoveMiniCircle);
+        el.parentNode.remove();
       });
-    }, 0);
-    setTimeout(() => {
-      miniBoard.remove();
-    }, 1000);
+    });
   }
   addRandomCircle(board, difficult);
 });
