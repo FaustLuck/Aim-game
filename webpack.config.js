@@ -25,7 +25,6 @@ export default {
     children: true
   },
   ...(!isProd && { devtool: "source-map" }),
-//  devtool: "source-map",
   mode,
   optimization: {
     splitChunks: {
