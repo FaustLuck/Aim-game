@@ -200,7 +200,8 @@ h1 {
       height: auto;
       width: 50%;
       @media screen and (max-width: 768px) {
-
+        width: auto;
+        height: 50%;
       }
     }
   }
