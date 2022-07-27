@@ -1,6 +1,12 @@
 document.addEventListener("mouseover", showTooltip);
 
+/**
+ * Показывает подсказку при наведение на элемент
+ * @param e{Event} событие
+ */
 function showTooltip(e) {
+  if (!window.matchMedia("(any-hover: hover)").matches) return;
+  if(window.matchMedia('(max-width: 480px)').matches) return;
   if (!e.target.getAttribute("data-tooltip")) return;
   let tooltipElem = document.createElement("div");
   let tooltipHtml = e.target.getAttribute("data-tooltip");

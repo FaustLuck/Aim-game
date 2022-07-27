@@ -22,11 +22,18 @@ function getRandomColor() {
 }
 
 /**
- * В зависимости от выбранной сложности генерирует размер цели
- * @param difficult
- * @returns {number}
+ * Генерация рамера цели в зависимсти от выбранной сложности
+ * @param difficult {String}- уровень сложности
+ * @returns {number} случайный размер
  */
+//todo mb  в объект? и return getRandomNumber(obj)
 function applyingDifficult(difficult) {
+  const obj = {
+    easy: { min: 60, max: 80 },
+    medium: { min: 40, max: 60 },
+    hard: { min: 20, max: 40 },
+    nightmare: { min: 10, max: 15 }
+  };
   switch (difficult) {
     case "easy":
       return getRandomNumber(60, 80);
@@ -39,6 +46,13 @@ function applyingDifficult(difficult) {
   }
 }
 
+/**
+ * Создание случайного круга с указанными размерами
+ * @param board {HTMLElement} эл-т для вставки круга
+ * @param size {Number} размеры родительского эл-та
+ * @param mini {Boolean} если true, осуществялется генерация маленьких шариков
+ * @returns {HTMLDivElement} созданный круг
+ */
 function createRandomCircle(board, size, mini = false) {
   const circle = document.createElement("div");
   const { width, height } = board.getBoundingClientRect();
@@ -48,13 +62,18 @@ function createRandomCircle(board, size, mini = false) {
   Object.assign(circle.style, {
     width: `${ size }px`,
     height: `${ size }px`,
-    top: `${ y }px`,
-    left: mini ? `${ y }px` : `${ x }px`
+    top: `${ mini ? size / 2 : y }px`,
+    left: `${ mini ? size / 2 : x }px`
   });
   circle.setAttribute("data-id", `${ Date.now() }`);
   return circle;
 }
 
+/**
+ * Вставка круга в элемент
+ * @param board {HTMLElement} родительский эл-т
+ * @param difficult {String} уровень сложности
+ */
 export function addRandomCircle(board, difficult) {
   const size = applyingDifficult(difficult);
   let circle = createRandomCircle(board, size);
@@ -75,7 +94,13 @@ export function addRandomCircle(board, difficult) {
   board.append(circle);
 }
 
-
+/**
+ * Генерация случайного градиента
+ * @param size {Number} размер эл-та
+ * @returns {{arrayColors: String[], offset: number}} массив с цветом и смещением в '%' для CSS-свойства
+ * background:radial-gradient(arrayColors[i]...)
+ * offset смещение цветов относительно друг друга в '%'
+ */
 function getRandomGradient(size) {
   const colorsCount = getRandomNumber(0, Math.round(size / 10)) + 2;
   let arrayColors = [];
@@ -88,14 +113,25 @@ function getRandomGradient(size) {
   return { arrayColors, offset };
 }
 
-
+/**
+ * Применеие градиента к эл-ту
+ * @param circle {HTMLElement} эл-т
+ * @param size {Number} - размер эл-та
+ * @returns {string} - строка для CSS-свойства
+ * background:radial-gradient(...)
+ */
 function applyGradient(circle, size) {
   let { arrayColors, offset } = getRandomGradient(size);
-  moving(circle, arrayColors, offset);
-  arrayColors = moveGradient(arrayColors, offset);
+  setInterval(moving, 10, circle, arrayColors, offset);
   return gradientToString(arrayColors);
 }
 
+/**
+ * Удаление вышедшего за рамки цвета и добавление нового
+ * @param arrayColors{Object[]} массив цветов для градиента
+ * @param offset{Number} смещение цветов относительно друг друга в '%'
+ * @returns {Object[]} массив цветов для градиента
+ */
 function moveGradient(arrayColors, offset) {
   const moveOffset = 1;
   for (let i = 0; i < arrayColors.length; i++) {
@@ -111,6 +147,11 @@ function moveGradient(arrayColors, offset) {
   return arrayColors;
 }
 
+/**
+ * Трансформирование объекта в строку для CSS-свойства background
+ * @param arrayColors {Object[]} - массив цветов
+ * @returns {string} строка для CSS-свойства background
+ */
 function gradientToString(arrayColors) {
   let str = `radial-gradient(`;
   for (let i = 0; i < arrayColors.length; i++) {
@@ -120,13 +161,23 @@ function gradientToString(arrayColors) {
   return str;
 }
 
+/**
+ * Перемещение градиента
+ * @param circle{HTMLElement} эл-т
+ * @param arrayGradient{Object[]} массив цветов и их позиций в градиенте
+ * @param offset{Number}смещение цветов в градиенте
+ */
 function moving(circle, arrayGradient, offset) {
-  setInterval(() => {
-    arrayGradient = moveGradient(arrayGradient, offset);
-    circle.style.background = gradientToString((arrayGradient));
-  }, 10);
+  arrayGradient = moveGradient(arrayGradient, offset);
+  circle.style.background = gradientToString((arrayGradient));
 }
 
+/**
+ * Создание эл-та (доски) для маленьких кругов
+ * @param board {HTMLElement} эл-та куда будет втавлена доска
+ * @param size {Number} размер доски
+ * @param circle {HTMLElement} круг, который "взорвется"
+ */
 function createMiniBoard(board, size, circle) {
   let id = circle.getAttribute("data-id");
   let miniBoard = document.createElement("div");
@@ -143,6 +194,11 @@ function createMiniBoard(board, size, circle) {
   createMiniCircles(miniBoard, size);
 }
 
+/**
+ * Создание мини кругов
+ * @param miniBoard {HTMLElement} - доска для мини-шариков
+ * @param size {Number} размер доски
+ */
 function createMiniCircles(miniBoard, size) {
   let id = miniBoard.getAttribute("data-id");
   let miniCircle = createRandomCircle(miniBoard, size / 4, true);
@@ -152,8 +208,11 @@ function createMiniCircles(miniBoard, size) {
   miniBoard.append(miniCircle);
 }
 
-export function moveMiniCircle(circle, delta) {
-  let x = Math.round(parseInt(circle.style.top) + delta);
-  circle.style.top = `${ x }px`;
-  circle.style.left = `${ x }px`;
+/**
+ * Перемещение мини-шарика
+ * @param circle мини-шарик
+ */
+export function moveMiniCircle(circle) {
+  let x = Math.round(parseInt(circle.style.top));
+  circle.style.transform = `translate(${ -20 * x }px, ${ -20 * x }px) scale(0)`;
 }

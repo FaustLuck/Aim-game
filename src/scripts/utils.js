@@ -1,9 +1,19 @@
-export const overlay = document.querySelector('.overlay');
+export const overlay = document.querySelector(".overlay");
 
+/**
+ * Преобразование таймстампа к дате
+ * @param timestamp {Number}
+ * @returns {string} дата вида ДД.ММ.ГГГГ
+ */
 export function prepareDate(timestamp) {
   return new Date(timestamp).toLocaleString("ru-RU").split(",")[0];
 }
 
+/**
+ * Заполнение таблицы данными
+ * @param table {HTMLElement} целевая таблица
+ * @param statistic {Object[]} данные
+ */
 export function fillTable(table, statistic) {
   table.innerHTML = "";
   for (let item of statistic) {
@@ -23,6 +33,13 @@ export function fillTable(table, statistic) {
   }
 }
 
+/**
+ * Рассчет очков в зависимости от сложности
+ * @param score{Number} кол-во кликнутых кругов
+ * @param difficult{String} уровень сложности
+ * @param time{Number} кол-во секунд игры
+ * @returns {number} набранные очки
+ */
 export function calculateScore(score, difficult, time) {
   time = Math.floor(time / 10);
   let middleScore = +(score / time).toFixed(4);
