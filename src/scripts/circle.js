@@ -26,7 +26,6 @@ function getRandomColor() {
  * @param difficult {String}- уровень сложности
  * @returns {number} случайный размер
  */
-//todo mb  в объект? и return getRandomNumber(obj)
 function applyingDifficult(difficult) {
   const obj = {
     easy: { min: 60, max: 80 },
@@ -34,16 +33,8 @@ function applyingDifficult(difficult) {
     hard: { min: 20, max: 40 },
     nightmare: { min: 10, max: 15 }
   };
-  switch (difficult) {
-    case "easy":
-      return getRandomNumber(60, 80);
-    case "medium":
-      return getRandomNumber(40, 60);
-    case "hard":
-      return getRandomNumber(20, 40);
-    case "nightmare":
-      return getRandomNumber(10, 15);
-  }
+  let param = Object.keys(obj).find(el => el === difficult);
+  return getRandomNumber(obj[param].min, obj[param].max);
 }
 
 /**

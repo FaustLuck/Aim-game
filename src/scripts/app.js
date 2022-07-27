@@ -13,7 +13,7 @@ const warning = document.querySelector(".screen-popup.warning");
 let time = 30;
 let difficult = "easy";
 let score = 0;
-let i = -1;
+let i;
 let timer, preTimer;
 
 startButton.addEventListener("click", e => {
@@ -102,7 +102,10 @@ function preTimerShow() {
   div.classList.add("go");
   div.addEventListener("animationend", () => {
     board.innerHTML = "";
+    ++i;
     if (i < pre.length) {
+      console.log(i)
+      console.log(i)
       preTimer = setTimeout(preTimerShow, 1000);
     } else {
       clearTimeout(preTimer);
@@ -110,7 +113,7 @@ function preTimerShow() {
       addRandomCircle(board, difficult);
       setTime(time);
     }
-    ++i;
+
   });
 
 }
