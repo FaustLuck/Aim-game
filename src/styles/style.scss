@@ -30,6 +30,10 @@ h1 {
   @media screen and (max-width: 768px) {
     line-height: 1;
     font-size: 2rem;
+    margin:.5rem;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 1.5rem;
   }
 }
 
