@@ -1,5 +1,5 @@
 import './src/scripts/app.js'
 import './src/scripts/tabs.js'
 import './src/scripts/globalStatistic.js'
-import './src/scripts/tooltip.js'
+import './src/scripts/tooltip.ts'
 import './src/styles/style.scss'

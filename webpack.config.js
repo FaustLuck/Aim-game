@@ -44,9 +44,17 @@ export default {
       {
         test: /\.js$/,
         loader: "babel-loader",
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /bucket/],
         options: {
           presets: ["@babel/preset-env"]
+        }
+      },
+      {
+        test: /\.ts$/,
+        loader: "babel-loader",
+        exclude: /node_module/,
+        options: {
+          presets: ["@babel/preset-env", "@babel/preset-typescript"]
         }
       },
       {
