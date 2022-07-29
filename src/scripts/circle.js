@@ -1,5 +1,6 @@
 export let timerCircle;
-
+import { difficultSettings } from "./utils.ts";
+//todo ts 204
 /**
  * Возвращает случайное целое число из заданного интервала
  * @param min минимальное значение
@@ -27,14 +28,8 @@ function getRandomColor() {
  * @returns {number} случайный размер
  */
 function applyingDifficult(difficult) {
-  const obj = {
-    easy: { min: 60, max: 80 },
-    medium: { min: 40, max: 60 },
-    hard: { min: 20, max: 40 },
-    nightmare: { min: 10, max: 15 }
-  };
-  let param = Object.keys(obj).find(el => el === difficult);
-  return getRandomNumber(obj[param].min, obj[param].max);
+  let param = difficultSettings.findIndex(el => el.difficult === difficult);
+  return getRandomNumber(difficultSettings[param].min, difficultSettings[param].max);
 }
 
 /**

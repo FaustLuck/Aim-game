@@ -1,7 +1,7 @@
-import { fillTable, prepareDate } from "./utils.js";
+import { createRecordStatistic, fillTable, prepareDate, statisticRecordType } from "./utils";
 
-let lastGames;
-let topRecord;
+let lastGames: statisticRecordType[];
+let topRecord: statisticRecordType;
 
 const topRecordInfo = document.querySelector(".top-record");
 const localStatisticTable = document.querySelector(".local-games").querySelector("tbody");
@@ -10,20 +10,20 @@ const localStatisticTable = document.querySelector(".local-games").querySelector
  * Сохранение данных в localStorage
  * @param score{Number} набранные очки
  */
-export function setLocalStatistic(score) {
-  let date = Date.now();
-  setTenLastGames({ date, score });
-  setTopScore({ date, score });
+export function setLocalStatistic(score: number): void {
+  let currentGameStatistic: statisticRecordType = createRecordStatistic(score);
+  setTenLastGames(currentGameStatistic);
+  setTopScore(currentGameStatistic);
 }
 
 /**
  * Запрос данных из localStorage и заполнение таблицы локальной статистики
  */
-export function getLocalStatistic() {
+export function getLocalStatistic(): void {
   getTenLastGames();
   getTopScore();
-  document.querySelector(".local-games-full").classList.toggle("hide", !topRecord);
-  document.querySelector(".local-games-empty").classList.toggle("hide", topRecord);
+  document.querySelector(".local-games-full").classList.toggle("hide", !topRecord?.date);
+  document.querySelector(".local-games-empty").classList.toggle("hide", Boolean(topRecord?.date));
   if (!topRecord) return;
   fillTopLocalScore();
   fillTable(localStatisticTable, lastGames);
@@ -32,16 +32,16 @@ export function getLocalStatistic() {
 /**
  * Запрос из localStorage и парсинг данных последних 10 игр
  */
-function getTenLastGames() {
-  lastGames = window.localStorage.getItem("lastGames");
-  lastGames = JSON.parse(lastGames) || [];
+function getTenLastGames(): void {
+  let lastGamesJSON = window.localStorage.getItem("lastGames");
+  lastGames = JSON.parse(lastGamesJSON) || [];
 }
 
 /**
  * Сохрание/обновление в localStorage данных последних 10 игр
  * @param currentGameStatistic{{date:Number,score:Number}} статистика текущей игры
  */
-function setTenLastGames(currentGameStatistic) {
+function setTenLastGames(currentGameStatistic: statisticRecordType): void {
   getTenLastGames();
   lastGames.push(currentGameStatistic);
   while (lastGames.length > 10) {
@@ -53,16 +53,16 @@ function setTenLastGames(currentGameStatistic) {
 /**
  * Запрос из localStorage данные о лучшей игре
  */
-function getTopScore() {
-  topRecord = window.localStorage.getItem("topRecord");
-  topRecord = JSON.parse(topRecord);
+function getTopScore(): void {
+  let topRecordJSON = window.localStorage.getItem("topRecord");
+  topRecord = JSON.parse(topRecordJSON);
 }
 
 /**
  * Сохрание/обновление в localStorage данных о лучшей игре
  * @param currentGameStatistic{{date:Number,score:Number}} статистика текущей игры
  */
-function setTopScore(currentGameStatistic) {
+function setTopScore(currentGameStatistic: statisticRecordType): void {
   if (!topRecord?.score || topRecord?.score < currentGameStatistic.score) {
     topRecord = currentGameStatistic;
     window.localStorage.setItem("topRecord", JSON.stringify(topRecord));
@@ -72,7 +72,7 @@ function setTopScore(currentGameStatistic) {
 /**+
  * Заполнение поля лучшей локальной игры
  */
-function fillTopLocalScore() {
-  topRecordInfo.querySelector(".top-score").innerHTML = topRecord.score;
+function fillTopLocalScore(): void {
+  topRecordInfo.querySelector(".top-score").innerHTML = `${topRecord.score}`;
   topRecordInfo.querySelector(".top-date").innerHTML = prepareDate(topRecord.date);
 }

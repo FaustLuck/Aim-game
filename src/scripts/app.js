@@ -1,8 +1,8 @@
 import { addRandomCircle, moveMiniCircle, timerCircle } from "./circle.js";
-import { setLocalStatistic } from "./localStatistic.js";
+import { setLocalStatistic } from "./localStatistic.ts";
 import { findGlobalPlace } from "./globalStatistic.js";
-import { calculateScore, overlay } from "./utils.js";
-
+import { calculateScore, overlay } from "./utils.ts";
+//todo ts 171
 const startButton = document.querySelector(".start");
 const screens = document.querySelectorAll(".screen");
 const settingsButtons = document.querySelector(".settings");
@@ -104,8 +104,6 @@ function preTimerShow() {
     board.innerHTML = "";
     ++i;
     if (i < pre.length) {
-      console.log(i)
-      console.log(i)
       preTimer = setTimeout(preTimerShow, 1000);
     } else {
       clearTimeout(preTimer);

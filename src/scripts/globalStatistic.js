@@ -1,7 +1,7 @@
-import { fillTable, overlay } from "./utils.js";
+import { fillTable, overlay } from "./utils.ts";
 import { initializeApp } from "firebase/app";
 import { getDatabase, onValue, ref, set } from "firebase/database";
-
+//todo ts 131
 const firebaseConfig = {
   apiKey: "AIzaSyCukmuh4VplvLpM3XQzlkGCuyGgX7x2y18",
   authDomain: "grastor-messagestorage.firebaseapp.com",
