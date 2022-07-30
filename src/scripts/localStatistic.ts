@@ -3,8 +3,8 @@ import { createRecordStatistic, fillTable, prepareDate, statisticRecordType } fr
 let lastGames: statisticRecordType[];
 let topRecord: statisticRecordType;
 
-const topRecordInfo = document.querySelector(".top-record");
-const localStatisticTable = document.querySelector(".local-games").querySelector("tbody");
+const topRecordInfo: HTMLElement = document.querySelector(".top-record");
+const localStatisticTable: HTMLTableSectionElement = document.querySelector(".local-games").querySelector("tbody");
 
 /**
  * Сохранение данных в localStorage
@@ -39,7 +39,7 @@ function getTenLastGames(): void {
 
 /**
  * Сохрание/обновление в localStorage данных последних 10 игр
- * @param currentGameStatistic{{date:Number,score:Number}} статистика текущей игры
+ * @param currentGameStatistic{statisticRecordType} статистика текущей игры
  */
 function setTenLastGames(currentGameStatistic: statisticRecordType): void {
   getTenLastGames();
@@ -60,10 +60,10 @@ function getTopScore(): void {
 
 /**
  * Сохрание/обновление в localStorage данных о лучшей игре
- * @param currentGameStatistic{{date:Number,score:Number}} статистика текущей игры
+ * @param currentGameStatistic{statisticRecordType} статистика текущей игры
  */
 function setTopScore(currentGameStatistic: statisticRecordType): void {
-  if (!topRecord?.score || topRecord?.score < currentGameStatistic.score) {
+  if (!topRecord?.score || topRecord.score < currentGameStatistic.score) {
     topRecord = currentGameStatistic;
     window.localStorage.setItem("topRecord", JSON.stringify(topRecord));
   }

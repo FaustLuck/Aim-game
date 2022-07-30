@@ -1,9 +1,8 @@
 export const overlay: HTMLDivElement = document.querySelector(".overlay");
 export type statisticRecordType = { date: number, score: number, player: string }
 
-export const difficultSettings: {
-  difficult: string, min: number, max: number, coefficient: number
-}[] = [
+export type difficultSettingsRecord = { difficult: string, min: number, max: number, coefficient: number }
+export const difficultSettings: difficultSettingsRecord[] = [
   { difficult: "easy", min: 60, max: 80, coefficient: 1 },
   { difficult: "medium", min: 40, max: 60, coefficient: 3 },
   { difficult: "hard", min: 20, max: 40, coefficient: 6 },
@@ -21,14 +20,14 @@ export function prepareDate(timestamp: number): string {
 
 /**
  * Заполнение таблицы данными
- * @param table {HTMLElement} целевая таблица
+ * @param table {HTMLTableSectionElement} целевая таблица
  * @param statistic {Object[]} данные
  */
-export function fillTable(table: HTMLTableSectionElement, statistic: statisticRecordType[]) {
+export function fillTable(table: HTMLTableSectionElement, statistic: statisticRecordType[]): void {
   table.innerHTML = "";
   for (let item of statistic) {
     let tr = document.createElement("tr");
-    if (item.player.length) {
+    if (item?.player && item.player.length) {
       let tdPlayer = document.createElement("td");
       tdPlayer.innerHTML = item.player;
       tr.append(tdPlayer);
@@ -58,7 +57,13 @@ export function calculateScore(score: number, difficult: string, time: number): 
   return +(middleScore * coefficient).toFixed(2);
 }
 
-export function createRecordStatistic(score: number, player = ""): statisticRecordType {
+/**
+ * Создает объект с данными текущей игры
+ * @param score{Number} кол-во очков полученных за игру
+ * @param player{String} имя игрока
+ * @returns {statisticRecordType} данные текущей игры
+ */
+export function createRecordStatistic(score: number, player: string = ""): statisticRecordType {
   return {
     date: Date.now(),
     score,

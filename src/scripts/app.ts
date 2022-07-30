@@ -1,20 +1,20 @@
-import { addRandomCircle, moveMiniCircle, timerCircle } from "./circle.js";
-import { setLocalStatistic } from "./localStatistic.ts";
-import { findGlobalPlace } from "./globalStatistic.js";
-import { calculateScore, overlay } from "./utils.ts";
-//todo ts 171
+import { calculateScore, overlay } from "./utils";
+import { addRandomCircle, moveMiniCircle, timerCircle } from "./circle";
+import { setLocalStatistic } from "./localStatistic";
+import { findGlobalPlace } from "./globalStatistic";
+
 const startButton = document.querySelector(".start");
 const screens = document.querySelectorAll(".screen");
 const settingsButtons = document.querySelector(".settings");
 const timeEl = document.querySelector("#time");
-const board = document.querySelector("#board");
+const board: HTMLDivElement = document.querySelector("#board");
 const warning = document.querySelector(".screen-popup.warning");
 
-let time = 30;
-let difficult = "easy";
-let score = 0;
-let i;
-let timer, preTimer;
+let time: number = 30;
+let difficult: string = "easy";
+let score: number = 0;
+let i: number;
+let timer: number, preTimer: number;
 
 startButton.addEventListener("click", e => {
   e.preventDefault();
@@ -25,11 +25,16 @@ board.addEventListener("click", clickOnCircle);
 document.querySelector(".warning-btn").addEventListener("click", closeWarning);
 document.addEventListener("click", closePopup);
 
-function closePopup(e) {
-  if (!e.target.classList.contains("screen-popup")) return;
-  if (!e.target.classList.contains("open")) return;
-  e.target.classList.remove("open");
-  let ledge = e.target.querySelector(".ledge") || null;
+/**
+ * Закрывает модальное окно
+ * @param e{Event} событие клика
+ */
+function closePopup(e: Event): void {
+  let target: Element = e.target as Element;
+  if (!target.classList.contains("screen-popup")) return;
+  if (!target.classList.contains("open")) return;
+  target.classList.remove("open");
+  let ledge: Element | null = target.querySelector(".ledge") || null;
   overlay.classList.remove("open");
   if (ledge) ledge.classList.remove("hide");
 }
@@ -38,17 +43,18 @@ function closePopup(e) {
  * Визульно отмечает какие настройки выбрал игрок
  * @param e{Event}клик по кнопкам
  */
-function saveSettings(e) {
-  if (e.target.classList.contains("difficult-btn")) {
+function saveSettings(e: Event): void {
+  let target: HTMLElement = e.target as HTMLElement;
+  if (target.classList.contains("difficult-btn")) {
     settingsButtons.querySelectorAll(".difficult-btn").forEach(el => el.classList.remove("selected"));
-    e.target.classList.add("selected");
-    if (e.target.getAttribute("data-difficult") === "nightmare") showWarning();
+    target.classList.add("selected");
+    if (target.getAttribute("data-difficult") === "nightmare") showWarning();
   }
-  if (e.target.classList.contains("time-btn")) {
+  if (target.classList.contains("time-btn")) {
     settingsButtons.querySelectorAll(".time-btn").forEach(el => el.classList.remove("selected"));
-    e.target.classList.add("selected");
+    target.classList.add("selected");
   }
-  if (e.target.classList.contains("start-btn")) {
+  if (target.classList.contains("start-btn")) {
     startGame();
   }
 }
@@ -57,19 +63,21 @@ function saveSettings(e) {
  * "Лопает" нажатый круг
  * @param e{Event} клик на круге
  */
-function clickOnCircle(e) {
-  if (!e.target.classList.contains("circle")) return;
+function clickOnCircle(e: Event): void {
+  let target: HTMLElement = e.target as HTMLElement;
+  if (!target.classList.contains("circle")) return;
   score++;
-  let id = e.target.getAttribute("data-id");
-  e.target.remove();
+  let id = target.getAttribute("data-id");
+  target.remove();
   if (difficult !== "nightmare") {
-    let miniBoards = board.querySelectorAll(`.mini-board[data-id="${ id }"]`);
-    let miniCircles = board.querySelectorAll(`.circle.mini[data-id="${ id }"]`);
+    let miniBoards = board.querySelectorAll(`.mini-board[data-id="${id}"]`);
+    let miniCircles: NodeListOf<HTMLDivElement> = board.querySelectorAll(`.circle.mini[data-id="${id}"]`);
     miniBoards.forEach(el => el.classList.add("show"));
     miniCircles.forEach(el => {
       moveMiniCircle(el);
       el.addEventListener("transitionend", () => {
-        el.parentNode.remove();
+        let parentNode: HTMLElement = el.parentNode as HTMLElement;
+        parentNode.remove();
       });
     });
   }
@@ -79,23 +87,24 @@ function clickOnCircle(e) {
 /**
  * На основании выбранных настроек начинает игру
  */
-function startGame() {
+function startGame(): void {
   i = 0;
   score = 0;
   screens[1].classList.add("up");
   board.innerHTML = "";
   difficult = document.querySelector(".difficult-btn.selected")?.getAttribute("data-difficult") || "easy";
   time = +document.querySelector(".time-btn.selected")?.getAttribute("data-time") || 30;
-  timeEl.parentNode.classList.remove("hide");
-  preTimer = setTimeout(preTimerShow, 1000);
+  let parentNode: HTMLElement = timeEl.parentNode as HTMLElement;
+  parentNode.classList.remove("hide");
+  preTimer = window.setTimeout(preTimerShow, 1000);
 }
 
 /**
- * Показывает предстартовых отсчет
+ * Показывает предстартовый отсчет
  */
-function preTimerShow() {
-  const pre = ["3", "2", "1", "GO!"];
-  let div = document.createElement("div");
+function preTimerShow(): void {
+  const pre: string[] = ["3", "2", "1", "GO!"];
+  let div: HTMLDivElement = document.createElement("div");
   div.classList.add("pre-timer");
   div.innerHTML = pre[i];
   board.append(div);
@@ -104,22 +113,20 @@ function preTimerShow() {
     board.innerHTML = "";
     ++i;
     if (i < pre.length) {
-      preTimer = setTimeout(preTimerShow, 1000);
+      preTimer = window.setTimeout(preTimerShow, 1000);
     } else {
       clearTimeout(preTimer);
-      timer = setInterval(decreaseTime, 1000);
+      timer = window.setInterval(decreaseTime, 1000);
       addRandomCircle(board, difficult);
       setTime(time);
     }
-
   });
-
 }
 
 /**
  * Уменьшает счетчик времени на 1, если время истекло, завершает игры
  */
-function decreaseTime() {
+function decreaseTime(): void {
   time ? setTime(--time) : finishGame();
 }
 
@@ -127,22 +134,23 @@ function decreaseTime() {
  * Вывод оставшегося времени на доской
  * @param value{Number} оставшееся время в секундах
  */
-function setTime(value) {
-  let minute = `${ Math.floor(value / 60) }`.padStart(2, "0");
-  let second = `${ Math.floor(value % 60) }`.padStart(2, "0");
-  timeEl.innerHTML = `${ minute }:${ second }`;
+function setTime(value: number): void {
+  let minute: string = `${Math.floor(value / 60)}`.padStart(2, "0");
+  let second: string = `${Math.floor(value % 60)}`.padStart(2, "0");
+  timeEl.innerHTML = `${minute}:${second}`;
 }
 
 /**
  * Завершение игры и возврат на экран настроек
  */
-function finishGame() {
+function finishGame(): void {
   clearInterval(timer);
   clearTimeout(timerCircle);
-  board.innerHTML = `<h1>Счет: <span class="primary">${ score }</span></h1>`;
-  timeEl.parentNode.classList.add("hide");
-  let time = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
-  let points = calculateScore(score, difficult, time);
+  board.innerHTML = `<h1>Счет: <span class="primary">${score}</span></h1>`;
+  let parentNode: HTMLElement = timeEl.parentNode as HTMLElement;
+  parentNode.classList.add("hide");
+  let time: number = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
+  let points: number = calculateScore(score, difficult, time);
   setLocalStatistic(points);
   findGlobalPlace(points);
   setTimeout(() => {
@@ -153,8 +161,8 @@ function finishGame() {
 /**
  * Показать предупреждение при выборе уровня сложности "Кошмар"
  */
-function showWarning() {
-  const agreementWithNightmare = window.localStorage.getItem("agreementWithNightmare");
+function showWarning(): void {
+  const agreementWithNightmare: string = window.localStorage.getItem("agreementWithNightmare");
   if (agreementWithNightmare === "true") return;
   overlay.classList.add("open");
   warning.classList.add("open");
@@ -164,8 +172,9 @@ function showWarning() {
  * Закрыть предупреждение при выборе уровня сложности "Кошмар"
  * сохранить согласие об этом в LocalStorage
  */
-function closeWarning() {
+function closeWarning(): void {
   overlay.classList.remove("open");
   warning.classList.remove("open");
   window.localStorage.setItem("agreementWithNightmare", "true");
 }
+

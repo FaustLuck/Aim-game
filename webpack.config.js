@@ -40,18 +40,10 @@ export default {
   },
   target: (isProd) ? "browserslist" : "web",
   resolve: {
-    extensions: [".ts", ".js"]
+    extensions: [".ts"]
   },
   module: {
     rules: [
-      {
-        test: /\.js$/,
-        loader: "babel-loader",
-        exclude: [/node_modules/, /bucket/],
-        options: {
-          presets: ["@babel/preset-env"]
-        }
-      },
       {
         test: /\.ts$/,
         loader: "babel-loader",
