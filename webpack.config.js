@@ -6,6 +6,20 @@ const __dirname = path.resolve();
 const mode = process.env.NODE_ENV;
 const isProd = mode === "production";
 
+const metaTags = {
+  "viewport": {property: "viewport", content: "width=device-width, initial-scale=1.0"},
+  "description": {property: "description", content: "Aim trainer проверь свои скорость и реакцию"},
+  "keywords": {property: "keywords", content: "Aim, скорость, реакция"},
+  "og:title": {property: "og:title", content: "Aim trainer"},
+  "og:site_name": {property: "og:site_name", content: "MoGo"},
+  "og:url": {property: "og:url", content: "https://faustluck.github.io/Aim-game/"},
+  "og:description": {property: "og:description", content: "Aim trainer - проверь свои скорость и реакцию"},
+  "og:image": {property: "og:image", content: path.resolve(__dirname, "src", "assets", "preview.png")},
+  "og:image:type": {property: "og:image:type", content: "image/png"},
+  "og:image:width": {property: "og:image:width", content: "200"},
+  "og:image:height": {property: "og:image:height", content: "200"}
+};
+
 export default {
   entry: path.resolve(__dirname, "./index.js"),
   output: {
@@ -83,7 +97,11 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/index.html",
-      scriptLoading: "module"
+      scriptLoading: "module",
+      ...(isProd && {
+        meta: metaTags,
+        favicon: path.resolve(__dirname, "src", "assets", "icon.ico")
+      })
     }),
     new MiniCssExtractPlugin({
       filename: "style.[contenthash].css",
