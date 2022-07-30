@@ -54,7 +54,7 @@ export default {
   },
   target: (isProd) ? "browserslist" : "web",
   resolve: {
-    extensions: [".ts"]
+    extensions: [".ts", ".js"]
   },
   module: {
     rules: [
