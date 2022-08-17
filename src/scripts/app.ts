@@ -7,11 +7,11 @@ const startButton = document.querySelector(".start");
 const screens = document.querySelectorAll(".screen");
 const settingsButtons = document.querySelector(".settings");
 const timeEl = document.querySelector("#time");
-const board: HTMLDivElement = document.querySelector("#board");
+const board: HTMLCanvasElement = document.querySelector("#board");
 const warning = document.querySelector(".screen-popup.warning");
 
-let time: number = 30;
-let difficult: string = "easy";
+let time: number;
+let difficult: string;
 let score: number = 0;
 let i: number;
 let timer: number, preTimer: number;
@@ -81,7 +81,7 @@ function clickOnCircle(e: Event): void {
       });
     });
   }
-  addRandomCircle(board, difficult);
+  // addRandomCircle(board, difficult);
 }
 
 /**
@@ -91,36 +91,61 @@ function startGame(): void {
   i = 0;
   score = 0;
   screens[1].classList.add("up");
-  board.innerHTML = "";
-  difficult = document.querySelector(".difficult-btn.selected")?.getAttribute("data-difficult") || "easy";
-  time = +document.querySelector(".time-btn.selected")?.getAttribute("data-time") || 30;
+  ({ width: board.width, height: board.height } = board.getBoundingClientRect());
+  let context = board.getContext("2d");
+  difficult = document.querySelector(".difficult-btn.selected")?.getAttribute("data-difficult");
+  time = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
   let parentNode: HTMLElement = timeEl.parentNode as HTMLElement;
   parentNode.classList.remove("hide");
-  preTimer = window.setTimeout(preTimerShow, 1000);
+  preTimer = window.setTimeout(preTimerShow, 1000, context);
+
+  // i = 0; -
+  // score = 0; -
+  // screens[1].classList.add("up"); -
+  // board.innerHTML = ""; -
+  // difficult = document.querySelector(".difficult-btn.selected")?.getAttribute("data-difficult") || "easy"; -
+  // time = +document.querySelector(".time-btn.selected")?.getAttribute("data-time") || 30; -
+  // let parentNode: HTMLElement = timeEl.parentNode as HTMLElement;
+  // parentNode.classList.remove("hide");
+  // preTimer = window.setTimeout(preTimerShow, 1000);
 }
 
 /**
  * Показывает предстартовый отсчет
  */
-function preTimerShow(): void {
+function preTimerShow(ctx: CanvasRenderingContext2D): void {
   const pre: string[] = ["3", "2", "1", "GO!"];
-  let div: HTMLDivElement = document.createElement("div");
-  div.classList.add("pre-timer");
-  div.innerHTML = pre[i];
-  board.append(div);
-  div.classList.add("go");
-  div.addEventListener("animationend", () => {
-    board.innerHTML = "";
-    ++i;
-    if (i < pre.length) {
-      preTimer = window.setTimeout(preTimerShow, 1000);
-    } else {
-      clearTimeout(preTimer);
-      timer = window.setInterval(decreaseTime, 1000);
-      addRandomCircle(board, difficult);
-      setTime(time);
-    }
-  });
+  let i = 0;
+  animatePreTimer(ctx, pre[i], 0);
+  // let div: HTMLDivElement = document.createElement("div");
+  // div.classList.add("pre-timer");
+  // div.innerHTML = pre[i];
+  // board.append(div);
+
+  // div.classList.add("go");
+  // div.addEventListener("animationend", () => {
+  //   board.innerHTML = "";
+  //   ++i;
+  //   if (i < pre.length) {
+  //     preTimer = window.setTimeout(preTimerShow, 1000);
+  //   } else {
+  //     clearTimeout(preTimer);
+  //     timer = window.setInterval(decreaseTime, 1000);
+  //     addRandomCircle(board, difficult);
+  //     setTime(time);
+  //   }
+  // });
+}
+
+function animatePreTimer(ctx: CanvasRenderingContext2D, text: string, textSize: number): void {
+  ctx.clearRect(0, 0, board.width, board.height);
+  ctx.font = `${textSize}px Khula sans-serif`;
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#FFF";
+  ctx.fillText(text, board.width / 2, board.height / 2);
+
+  //todo requestAnimationFrame
 }
 
 /**

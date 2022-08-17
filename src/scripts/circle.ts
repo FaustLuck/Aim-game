@@ -34,6 +34,13 @@ function applyingDifficult(difficult: string): number {
   return getRandomNumber(difficultSettings[param].min, difficultSettings[param].max);
 }
 
+
+/*function createRandomCircle(board: HTMLCanvasElement,size:number,mini: boolean=false){
+
+  const x: number = getRandomNumber(0, width - size);
+  const y: number = getRandomNumber(0, height - size);
+}*/
+
 /**
  * Создание случайного круга с указанными размерами
  * @param board {HTMLElement} эл-т для вставки круга
