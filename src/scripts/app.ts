@@ -1,5 +1,5 @@
 import { calculateScore, overlay } from "./utils";
-import { addRandomCircle, moveMiniCircle, timerCircle } from "./circle";
+import { /*addRandomCircle,*/ moveMiniCircle, timerCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
 import { findGlobalPlace } from "./globalStatistic";
 
@@ -40,7 +40,7 @@ function closePopup(e: Event): void {
 }
 
 /**
- * Визульно отмечает какие настройки выбрал игрок
+ * Визуально отмечает какие настройки выбрал игрок
  * @param e{Event}клик по кнопкам
  */
 function saveSettings(e: Event): void {
@@ -151,12 +151,12 @@ function animatePreTimer(ctx: CanvasRenderingContext2D, text: string, textSize: 
 /**
  * Уменьшает счетчик времени на 1, если время истекло, завершает игры
  */
-function decreaseTime(): void {
-  time ? setTime(--time) : finishGame();
-}
+// function decreaseTime(): void {
+//   time ? setTime(--time) : finishGame();
+// }
 
 /**
- * Вывод оставшегося времени на доской
+ * Вывод оставшегося времени над доской
  * @param value{Number} оставшееся время в секундах
  */
 function setTime(value: number): void {
