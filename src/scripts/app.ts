@@ -63,7 +63,7 @@ function saveSettings(e: Event): void {
  * "Лопает" нажатый круг
  * @param e{Event} клик на круге
  */
-function clickOnCircle(e: PointerEvent): void {
+function clickOnCircle(e: MouseEvent): void {
   let target: HTMLElement = e.target as HTMLElement;
   if (!target.classList.contains("circle")) return;
   let { x: xClick, y: yClick } = e;
