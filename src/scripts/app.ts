@@ -40,7 +40,7 @@ function closePopup(e: Event): void {
 }
 
 /**
- * Визульно отмечает какие настройки выбрал игрок
+ * Визуально отмечает какие настройки выбрал игрок
  * @param e{Event}клик по кнопкам
  */
 function saveSettings(e: Event): void {
@@ -63,9 +63,13 @@ function saveSettings(e: Event): void {
  * "Лопает" нажатый круг
  * @param e{Event} клик на круге
  */
-function clickOnCircle(e: Event): void {
+function clickOnCircle(e: PointerEvent): void {
   let target: HTMLElement = e.target as HTMLElement;
   if (!target.classList.contains("circle")) return;
+  let { x: xClick, y: yClick } = e;
+  let coordsTarget = target.getBoundingClientRect();
+  if (xClick < coordsTarget.left || xClick > coordsTarget.right) return;
+  if (yClick < coordsTarget.top || yClick > coordsTarget.bottom) return;
   score++;
   let id = target.getAttribute("data-id");
   target.remove();
@@ -131,7 +135,7 @@ function decreaseTime(): void {
 }
 
 /**
- * Вывод оставшегося времени на доской
+ * Вывод оставшегося времени над доской
  * @param value{Number} оставшееся время в секундах
  */
 function setTime(value: number): void {
