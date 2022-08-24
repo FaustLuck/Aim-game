@@ -2,6 +2,7 @@ import { calculateScore, overlay } from "./utils";
 import { /*addRandomCircle,*/ moveMiniCircle, timerCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
 import { findGlobalPlace } from "./globalStatistic";
+import firebase from "firebase/compat";
 
 const startButton = document.querySelector(".start");
 const screens = document.querySelectorAll(".screen");
@@ -116,37 +117,84 @@ function startGame(): void {
 function preTimerShow(ctx: CanvasRenderingContext2D): void {
   const pre: string[] = ["3", "2", "1", "GO!"];
   let i = 0;
-  animatePreTimer(ctx, pre[i], 0);
-  // let div: HTMLDivElement = document.createElement("div");
-  // div.classList.add("pre-timer");
-  // div.innerHTML = pre[i];
-  // board.append(div);
-
-  // div.classList.add("go");
-  // div.addEventListener("animationend", () => {
-  //   board.innerHTML = "";
-  //   ++i;
-  //   if (i < pre.length) {
-  //     preTimer = window.setTimeout(preTimerShow, 1000);
-  //   } else {
-  //     clearTimeout(preTimer);
-  //     timer = window.setInterval(decreaseTime, 1000);
-  //     addRandomCircle(board, difficult);
-  //     setTime(time);
-  //   }
-  // });
+  // animatePreTimer(ctx, pre[i], 5);
+  animatePreTimer({
+    duration: 1000,
+    timing: function (process: number) {
+      return process;
+    },
+    draw: drawPreTimer(ctx, pre[i])
+  });
 }
 
-function animatePreTimer(ctx: CanvasRenderingContext2D, text: string, textSize: number): void {
-  ctx.clearRect(0, 0, board.width, board.height);
-  ctx.font = `${textSize}px Khula sans-serif`;
+
+function animatePreTimer({ duration, drawPreTimer, timing }:any) {
+  let start = performance.now();
+
+  let id = requestAnimationFrame(function animatePreTimer(time) {
+    let process = (time - start)*100 / duration;
+
+    let progress = timing(process);
+
+    drawPreTimer(progress);
+    if (process < 100) {
+      requestAnimationFrame(animatePreTimer);
+    }
+  });
+}
+
+
+function drawPreTimer(ctx: CanvasRenderingContext2D, text: string) {
+  let opacity = 1;
+  let textSize = 5;
+  let scale = 0;
+
   ctx.textBaseline = "middle";
   ctx.textAlign = "center";
-  ctx.fillStyle = "#FFF";
-  ctx.fillText(text, board.width / 2, board.height / 2);
 
-  //todo requestAnimationFrame
+  ctx.clearRect(0, 0, board.width, board.height);
+    ctx.font = `${textSize * scale}rem Khula sans-serif`;
+    ctx.fillStyle = `rgba(255,255,255,${opacity})`;
+    ctx.fillText(text, board.width / 2, board.height / 2);
+
+
+
 }
+
+
+// function animatePreTimer(ctx: CanvasRenderingContext2D, text: string, duration: number): void {
+//   let start = performance.now();
+//   let opacity = 1;
+//   let textSize = 5;
+//   let scale = 0;
+//
+//   ctx.textBaseline = "middle";
+//   ctx.textAlign = "center";
+
+//   function draw() {
+//     ctx.clearRect(0, 0, board.width, board.height);
+//     ctx.font = `${textSize * scale}rem Khula sans-serif`;
+//     ctx.fillStyle = `rgba(255,255,255,${opacity})`;
+//     ctx.fillText(text, board.width / 2, board.height / 2);
+//     function animationProcess() {
+//       return (performance.now() - start) / duration;
+//     }
+//     let process = animationProcess();
+//     if (process < 34) scale = process / 11;
+//     if (process >= 34 && process < 67) opacity = .5 * 66 / process;
+//     if (process >= 67) {
+//       scale = 50 - ((50 - 3) / (100 - 66)) * (100 - process);
+//       opacity = 1 - process / 100;
+//     }
+//     if (process < 100) {
+//       window.requestAnimationFrame(draw);
+//     } else {
+//       ctx.clearRect(0, 0, board.width, board.height);
+//     }
+//   }
+//
+//   draw();
+// }
 
 /**
  * Уменьшает счетчик времени на 1, если время истекло, завершает игры
