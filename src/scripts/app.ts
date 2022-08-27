@@ -2,7 +2,7 @@ import { calculateScore, overlay } from "./utils";
 import { moveMiniCircle, timerCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
 import { findGlobalPlace } from "./globalStatistic";
-import preTimer from "./preTimer";
+import { PreTimer } from "./preTimer";
 
 
 const startButton = document.querySelector(".start");
@@ -11,8 +11,6 @@ const settingsButtons = document.querySelector(".settings");
 const timeEl = document.querySelector("#time");
 const board: HTMLCanvasElement = document.querySelector("#board");
 const warning = document.querySelector(".screen-popup.warning");
-
-let context = board.getContext("2d");
 
 let time: number;
 let difficult: string;
@@ -58,7 +56,9 @@ function saveSettings(e: Event): void {
     target.classList.add("selected");
   }
   if (target.classList.contains("start-btn")) {
-    startGame();
+    score = 0;
+    screens[1].classList.add("up");
+    screens[1].addEventListener("transitionend", startGame);
   }
 }
 
@@ -91,21 +91,21 @@ function clickOnCircle(e: Event): void {
  * На основании выбранных настроек начинает игру
  */
 function startGame(): void {
-  score = 0;
-  screens[1].classList.add("up");
   ({ width: board.width, height: board.height } = board.getBoundingClientRect());
   difficult = document.querySelector(".difficult-btn.selected")?.getAttribute("data-difficult");
   time = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
   let parentNode: HTMLElement = timeEl.parentNode as HTMLElement;
   parentNode.classList.remove("hide");
-  preTimer.start(board, context).then();
+  let preTimer = new PreTimer(board).start();
+  preTimer.then(()=>{});
+  // console.log('OK')
 }
 
 
 
 
 /**
- * Уменьшает счетчик времени на 1, если время истекло, завершает игры
+ * Уменьшает счетчик времени на 1, если время истекло, завершает игру
  */
 // function decreaseTime(): void {
 //   time ? setTime(--time) : finishGame();

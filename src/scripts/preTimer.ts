@@ -1,55 +1,66 @@
-export default {
+export class PreTimer {
+  opacity: number;
+  scale: number;
+  process: number;
+  id: number;
+  startTimestamp: number;
+  text: string;
+  duration: number = 1000;
+  board: HTMLCanvasElement;
+  context: CanvasRenderingContext2D;
+
+
+  constructor(board: HTMLCanvasElement) {
+    this.board = board;
+    this.context = this.board.getContext("2d");
+    this.draw = this.draw.bind(this);
+  }
+
   /**
    * Показывает предстартовый отсчет
-   * @param board - canvas эл-т
-   * @param context - 2d контекст
    */
-  async start(board: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+  async start() {
     const pre: string[] = ["3", "2", "1", "GO!"];
-    for (const timerString of pre) {
-      await this.animate(timerString, performance.now(), 1000, board, context);
+    for (this.text of pre) {
+      this.startTimestamp = performance.now();
+      await this.animate();
     }
-  },
+  }
+
   /**
    * Начальные данные для отрисовки предстартового отсчета
-   * @param text - рисуемый текст
-   * @param start - таймстамп начала анимации
-   * @param duration - продолжительность анимации
-   * @param board - canvas эл-т
-   * @param context - 2d контекст
    */
-  animate(text: string, start: number, duration: number, board: HTMLCanvasElement, context: CanvasRenderingContext2D): Promise<number> {
-    let opacity = 1;
-    let scale = 0;
-    let process = 0;
-    let id = window.requestAnimationFrame(draw);
-
-    /**
-     * отрисовка отсчета в canvas
-     */
-    function draw() {
-      context.textBaseline = "middle";
-      context.textAlign = "center";
-      context.clearRect(0, 0, board.width, board.height);
-      context.font = `${5 * scale}rem Khula sans-serif`;
-      context.fillStyle = `rgba(255,255,255,${opacity})`;
-      context.fillText(text, board.width / 2, board.height / 2);
-      process = (performance.now() - start) * 100 / duration;
-      if (process < 100 / 3) scale = process / 11;
-      if (process >= 100 / 3 && process <= 2 * 100 / 3) opacity = .5 * 66 / process;
-      if (process > 2 * 100 / 3) {
-        scale = 50 - ((50 - 3) / (100 - 66)) * (100 - process);
-        opacity = 1 - process / 100;
-      }
-      if (process < 100) {
-        window.requestAnimationFrame(draw);
-      } else {
-        context.clearRect(0, 0, board.width, board.height);
-        window.cancelAnimationFrame(id);
-      }
-    }
-
+  animate(): Promise<number> {
+    this.opacity = 1;
+    this.scale = 0;
+    this.process = 0;
+    this.id = window.requestAnimationFrame(this.draw);
     return new Promise((resolve) => setTimeout(() => resolve(1), 1000));
   }
 
-};
+  /**
+   * отрисовка отсчета в canvas
+   */
+  draw() {
+    this.context.textBaseline = "middle";
+    this.context.textAlign = "center";
+    this.context.clearRect(0, 0, this.board.width, this.board.height);
+    this.context.font = `${5 * this.scale}rem Khula sans-serif`;
+    this.context.fillStyle = `rgba(255,255,255,${this.opacity})`;
+    this.context.fillText(this.text, this.board.width / 2, this.board.height / 2);
+    this.process = (performance.now() - this.startTimestamp) * 100 / this.duration;
+    if (this.process < 100 / 3) this.scale = this.process / 11;
+    if (this.process >= 100 / 3 && this.process <= 2 * 100 / 3) this.opacity = .5 * 66 / this.process;
+    if (this.process > 2 * 100 / 3) {
+      this.scale = 50 - ((50 - 3) / (100 - 66)) * (100 - this.process);
+      this.opacity = 1 - this.process / 100;
+    }
+    if (this.process < 100) {
+      window.requestAnimationFrame(this.draw);
+    } else {
+      this.context.clearRect(0, 0, this.board.width, this.board.height);
+      window.cancelAnimationFrame(this.id);
+    }
+  }
+
+}
