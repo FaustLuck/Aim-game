@@ -78,17 +78,14 @@ function checkClick(clickCoords: { x: number, y: number }): boolean {
  * @param e{Event} клик на круге
  */
 function clickOnCircle(e: MouseEvent): void {
+  if (!circle) return;
   let { left, top } = board.getBoundingClientRect();
   let clickCoords = { x: e.x - left, y: e.y - top };
   if (!checkClick(clickCoords)) return;
   score++;
   circle.clear();
-  for (let i = 0; i < 10; i++) {
-    let { x, y, radius, id } = circle.getInfo();
-    let miniCircle = new MiniCircle(board,x, y, radius, id);
-    miniCircle.draw();
-  }
-
+  circle = new Circle(difficult, board);
+  circle.animate();
 }
 
 /**
@@ -96,12 +93,13 @@ function clickOnCircle(e: MouseEvent): void {
  */
 function startGame(): void {
   if (!screens[1].classList.contains("up")) return;
+  clearBoard();
   ({ width: board.width, height: board.height } = board.getBoundingClientRect());
   difficult = document.querySelector(".difficult-btn.selected")?.getAttribute("data-difficult");
   time = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
   let parentNode: HTMLElement = timeEl.parentNode as HTMLHeadingElement;
   parentNode.classList.remove("hide");
-  board.getContext("2d").clearRect(0, 0, board.width, board.height);
+
   /*
    let preTimer = new PreTimer(board).start();
     preTimer.then(() => {
@@ -113,7 +111,7 @@ function startGame(): void {
   // todo ^^ вернуть на место. вызов отсчета перед стартом. вызов отрисовки кругов
   setTime(time);
   circle = new Circle(difficult, board);
-  circle.draw();
+  circle.animate();
   timer = window.setInterval(decreaseTime, 1000);
 }
 
@@ -140,6 +138,9 @@ function setTime(value: number): void {
  */
 function finishGame(): void {
   clearInterval(timer);
+  circle.clear();
+  circle = null;
+  clearBoard();
   let parentNode: HTMLElement = timeEl.parentNode as HTMLHeadingElement;
   parentNode.classList.add("hide");
   showScore();
@@ -152,13 +153,18 @@ function finishGame(): void {
   }, 1500);
 }
 
+function clearBoard() {
+  let context = board.getContext("2d");
+  context.clearRect(0, 0, board.width, board.height);
+}
+
 
 function showScore() {
+  clearBoard();
   let context = board.getContext("2d");
   context.textBaseline = "middle";
   context.textAlign = "center";
   context.font = `7rem Khula sans-serif`;
-  context.clearRect(0, 0, board.width, board.height);
   context.fillStyle = `#16D9E3`;
   let text = `Счет: ${score}`;
   context.fillText(text, board.width / 2, board.height / 2);

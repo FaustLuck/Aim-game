@@ -2,15 +2,15 @@
  * @constructor
  */
 export class PreTimer {
-  opacity: number;
-  scale: number;
-  process: number;
-  id: number;
-  startTimestamp: number;
-  text: string;
- duration: number = 1000;
-  board: HTMLCanvasElement;
-  context: CanvasRenderingContext2D;
+  protected opacity: number;
+  protected scale: number;
+  protected process: number;
+  protected id: number;
+  protected startTimestamp: number;
+  protected text: string;
+  protected readonly duration: number = 1000;
+  protected readonly board: HTMLCanvasElement;
+  protected readonly context: CanvasRenderingContext2D;
 
   /**
    * Создание предстартового отсчета перед игрой
