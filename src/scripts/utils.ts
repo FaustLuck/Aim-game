@@ -3,10 +3,10 @@ export type statisticRecordType = { date: number, score: number, player: string 
 
 export type difficultSettingsRecord = { difficult: string, min: number, max: number, coefficient: number }
 export const difficultSettings: difficultSettingsRecord[] = [
-  { difficult: "easy", min: 60, max: 80, coefficient: 1 },
-  { difficult: "medium", min: 40, max: 60, coefficient: 3 },
-  { difficult: "hard", min: 20, max: 40, coefficient: 6 },
-  { difficult: "nightmare", min: 10, max: 15, coefficient: 10 }
+  { difficult: "easy", min: 30, max: 40, coefficient: 1 },
+  { difficult: "medium", min: 20, max: 30, coefficient: 3 },
+  { difficult: "hard", min: 10, max: 20, coefficient: 6 },
+  { difficult: "nightmare", min: 5, max: 8, coefficient: 10 }
 ];
 
 /**

@@ -1,8 +1,8 @@
 import { calculateScore, overlay } from "./utils";
-import { moveMiniCircle, timerCircle } from "./circle";
+import { Circle, MiniCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
 import { findGlobalPlace } from "./globalStatistic";
-import { PreTimer } from "./preTimer";
+// import { PreTimer } from "./preTimer";
 
 
 const startButton = document.querySelector(".start");
@@ -16,6 +16,7 @@ let time: number;
 let difficult: string;
 let score: number = 0;
 let timer: number;
+let circle: Circle, miniCircles: MiniCircle;
 
 startButton.addEventListener("click", e => {
   e.preventDefault();
@@ -31,7 +32,7 @@ document.addEventListener("click", closePopup);
  * @param e{Event} событие клика
  */
 function closePopup(e: Event): void {
-  let target: Element = e.target as Element;
+  let target: HTMLElement = e.target as HTMLElement;
   if (!target.classList.contains("screen-popup")) return;
   if (!target.classList.contains("open")) return;
   target.classList.remove("open");
@@ -63,53 +64,66 @@ function saveSettings(e: Event): void {
 }
 
 /**
+ * Проверка координат клика
+ * @param clickCoords  {x: number, y: number} координаты клика мышью
+ * @return
+ */
+function checkClick(clickCoords: { x: number, y: number }): boolean {
+  let { x, y, radius } = circle.getInfo();
+  return (clickCoords.x - x) ** 2 + (clickCoords.y - y) ** 2 <= radius ** 2;
+}
+
+/**
  * "Лопает" нажатый круг
  * @param e{Event} клик на круге
  */
-function clickOnCircle(e: Event): void {
-  let target: HTMLElement = e.target as HTMLElement;
-  if (!target.classList.contains("circle")) return;
+function clickOnCircle(e: MouseEvent): void {
+  let { left, top } = board.getBoundingClientRect();
+  let clickCoords = { x: e.x - left, y: e.y - top };
+  if (!checkClick(clickCoords)) return;
   score++;
-  let id = target.getAttribute("data-id");
-  target.remove();
-  if (difficult !== "nightmare") {
-    let miniBoards = board.querySelectorAll(`.mini-board[data-id="${id}"]`);
-    let miniCircles: NodeListOf<HTMLDivElement> = board.querySelectorAll(`.circle.mini[data-id="${id}"]`);
-    miniBoards.forEach(el => el.classList.add("show"));
-    miniCircles.forEach(el => {
-      moveMiniCircle(el);
-      el.addEventListener("transitionend", () => {
-        let parentNode: HTMLElement = el.parentNode as HTMLElement;
-        parentNode.remove();
-      });
-    });
+  circle.clear();
+  for (let i = 0; i < 10; i++) {
+    let { x, y, radius, id } = circle.getInfo();
+    let miniCircle = new MiniCircle(board,x, y, radius, id);
+    miniCircle.draw();
   }
-  // addRandomCircle(board, difficult);
+
 }
 
 /**
  * На основании выбранных настроек начинает игру
  */
 function startGame(): void {
+  if (!screens[1].classList.contains("up")) return;
   ({ width: board.width, height: board.height } = board.getBoundingClientRect());
   difficult = document.querySelector(".difficult-btn.selected")?.getAttribute("data-difficult");
   time = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
-  let parentNode: HTMLElement = timeEl.parentNode as HTMLElement;
+  let parentNode: HTMLElement = timeEl.parentNode as HTMLHeadingElement;
   parentNode.classList.remove("hide");
-  let preTimer = new PreTimer(board).start();
-  preTimer.then(()=>{});
-  // console.log('OK')
+  board.getContext("2d").clearRect(0, 0, board.width, board.height);
+  /*
+   let preTimer = new PreTimer(board).start();
+    preTimer.then(() => {
+      circle = new Circle(difficult, board);
+      circle.draw()
+
+    });
+    */
+  // todo ^^ вернуть на место. вызов отсчета перед стартом. вызов отрисовки кругов
+  setTime(time);
+  circle = new Circle(difficult, board);
+  circle.draw();
+  timer = window.setInterval(decreaseTime, 1000);
 }
-
-
 
 
 /**
  * Уменьшает счетчик времени на 1, если время истекло, завершает игру
  */
-// function decreaseTime(): void {
-//   time ? setTime(--time) : finishGame();
-// }
+function decreaseTime(): void {
+  time ? setTime(--time) : finishGame();
+}
 
 /**
  * Вывод оставшегося времени над доской
@@ -126,17 +140,28 @@ function setTime(value: number): void {
  */
 function finishGame(): void {
   clearInterval(timer);
-  clearTimeout(timerCircle);
-  board.innerHTML = `<h1>Счет: <span class="primary">${score}</span></h1>`;
-  let parentNode: HTMLElement = timeEl.parentNode as HTMLElement;
+  let parentNode: HTMLElement = timeEl.parentNode as HTMLHeadingElement;
   parentNode.classList.add("hide");
-  let time: number = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
-  let points: number = calculateScore(score, difficult, time);
+  showScore();
+  let timeStart: number = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
+  let points: number = calculateScore(score, difficult, timeStart);
   setLocalStatistic(points);
   findGlobalPlace(points);
   setTimeout(() => {
     screens[1].classList.remove("up");
   }, 1500);
+}
+
+
+function showScore() {
+  let context = board.getContext("2d");
+  context.textBaseline = "middle";
+  context.textAlign = "center";
+  context.font = `7rem Khula sans-serif`;
+  context.clearRect(0, 0, board.width, board.height);
+  context.fillStyle = `#16D9E3`;
+  let text = `Счет: ${score}`;
+  context.fillText(text, board.width / 2, board.height / 2);
 }
 
 /**

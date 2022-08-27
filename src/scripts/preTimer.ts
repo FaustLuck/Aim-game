@@ -1,3 +1,6 @@
+/**
+ * @constructor
+ */
 export class PreTimer {
   opacity: number;
   scale: number;
@@ -5,11 +8,14 @@ export class PreTimer {
   id: number;
   startTimestamp: number;
   text: string;
-  duration: number = 1000;
+ duration: number = 1000;
   board: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
 
-
+  /**
+   * Создание предстартового отсчета перед игрой
+   * @param board {HTMLCanvasElement}
+   */
   constructor(board: HTMLCanvasElement) {
     this.board = board;
     this.context = this.board.getContext("2d");

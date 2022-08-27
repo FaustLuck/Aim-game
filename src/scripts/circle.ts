@@ -25,7 +25,7 @@ function getRandomColor(): string {
 }
 
 /**
- * Генерация рамера цели в зависимсти от выбранной сложности
+ * Генерация размера цели в зависимости от выбранной сложности
  * @param difficult {String}- уровень сложности
  * @returns {number} случайный размер
  */
@@ -34,18 +34,11 @@ function applyingDifficult(difficult: string): number {
   return getRandomNumber(difficultSettings[param].min, difficultSettings[param].max);
 }
 
-
-/*function createRandomCircle(board: HTMLCanvasElement,size:number,mini: boolean=false){
-
-  const x: number = getRandomNumber(0, width - size);
-  const y: number = getRandomNumber(0, height - size);
-}*/
-
 /**
  * Создание случайного круга с указанными размерами
  * @param board {HTMLElement} эл-т для вставки круга
  * @param size {Number} размеры родительского эл-та
- * @param mini {Boolean} если true, осуществялется генерация маленьких шариков
+ * @param mini {Boolean} если true, осуществляется генерация маленьких шариков
  * @returns {HTMLDivElement} созданный круг
  */
 function createRandomCircle(board: HTMLDivElement, size: number, mini: boolean = false): HTMLDivElement {
@@ -109,7 +102,7 @@ function getRandomGradient(size: number): { arrayColors: arrayColorsRecord[]; of
 }
 
 /**
- * Применеие градиента к эл-ту
+ * Применение градиента к эл-ту
  * @param circle {HTMLElement} эл-т
  * @param size {Number} - размер эл-та
  * @returns {string} - строка для CSS-свойства
@@ -169,7 +162,7 @@ function moving(circle: HTMLDivElement, arrayGradient: arrayColorsRecord[], offs
 
 /**
  * Создание эл-та (доски) для маленьких кругов
- * @param board {HTMLElement} эл-та куда будет втавлена доска
+ * @param board {HTMLElement} эл-та куда будет вставлена доска
  * @param size {Number} размер доски
  * @param circle {HTMLElement} круг, который "взорвется"
  */
@@ -204,10 +197,137 @@ function createMiniCircles(miniBoard: HTMLDivElement, size: number): void {
 }
 
 /**
- * Перемещение мини-крука
+ * Перемещение мини-круга
  * @param circle мини-круг
  */
 export function moveMiniCircle(circle: HTMLDivElement) {
   let x = Math.round(parseInt(circle.style.top));
   circle.style.transform = `translate(${-20 * x}px, ${-20 * x}px) scale(0)`;
 }
+
+
+export class Circle extends Object {
+  protected readonly radius: number;
+  protected readonly x: number;
+  protected readonly y: number;
+  private colors: arrayColorsRecord[] = [];
+  private readonly color: string = "rgb(54 66 78)";
+  private readonly offset: number;
+  protected readonly context: CanvasRenderingContext2D;
+  protected readonly board: HTMLCanvasElement;
+  protected readonly id: number;
+
+  /**
+   *
+   * @param difficult от выбранной сложности зависит размер круга и расцветка
+   * @param board
+   */
+  constructor(difficult: string, board: HTMLCanvasElement) {
+    super();
+    this.radius = applyingDifficult(difficult);
+    this.board = board;
+    this.context = board.getContext("2d");
+    const { width, height }: { width: number, height: number } = board.getBoundingClientRect();
+    this.x = getRandomNumber(this.radius, width - this.radius);
+    this.y = getRandomNumber(this.radius, height - this.radius);
+    this.id = performance.now();
+    if (difficult !== "nightmare") {
+      ({
+        offset: this.offset,
+        array: this.colors
+      } = this.createGradient());
+    }
+  }
+
+  /**
+   * Генерация случайного градиента
+   * @returns {{arrayColors: String[], offset: number}} массив с цветом и смещением в '%' для CSS-свойства
+   * background:radial-gradient(arrayColors[i]...)
+   * offset смещение цветов относительно друг друга [0,1]
+   */
+  protected createGradient() {
+    const colorsCount: number = getRandomNumber(2, Math.round(this.radius / 5)) + 2;
+    let array: arrayColorsRecord[] = [];
+    let offset: number = 1 / (colorsCount - 1);
+    let position: number = 0;
+    for (let i = 0; i < colorsCount; i++) {
+      array.push({ color: getRandomColor(), position: Math.round(position * 100) / 100 });
+      position += offset;
+    }
+    return { array, offset };
+  }
+
+  /**
+   * Отрисовка круга
+   */
+  draw() {
+    if (this.colors.length) {
+      let gradient = this.context.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+      this.colors.forEach(({ color, position }) => gradient.addColorStop(position, color));
+      this.context.fillStyle = gradient;
+    } else {
+      this.context.fillStyle = this.color;
+    }
+    this.context.beginPath();
+    this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    this.context.fill();
+    this.context.closePath();
+  }
+
+  getInfo() {
+    return { x: this.x, y: this.y, radius: this.radius, id: this.id };
+  }
+
+  clear() {
+    this.context.clearRect(this.x - this.radius, this.y - this.radius, this.x + this.radius, this.y + this.radius);
+  }
+}
+
+export class MiniCircle {
+  protected readonly radius: number;
+  protected readonly x: number;
+  protected readonly y: number;
+  protected readonly radiusCircle: number;
+  protected readonly xCircle: number;
+  protected readonly yCircle: number;
+  private readonly color: string;
+  protected readonly context: CanvasRenderingContext2D;
+  protected readonly board: HTMLCanvasElement;
+  protected readonly id: number;
+
+  constructor(board: HTMLCanvasElement, x: number, y: number, radius: number, id: number) {
+    this.xCircle = x;
+    this.yCircle = y;
+    this.radiusCircle = radius;
+    this.radius = radius / 4;
+    this.board = board;
+    this.context = board.getContext("2d");
+    this.color = getRandomColor();
+    this.id = id;
+  }
+
+  draw() {
+    this.context.fillStyle = this.color;
+    this.context.beginPath();
+    this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    this.context.fill();
+    this.context.closePath();
+  }
+
+  clear() {
+    this.context.clearRect(this.x - this.radius, this.y - this.radius, this.x + this.radius, this.y + this.radius);
+  }
+
+}
+
+
+/*
+function createMiniCircles(miniBoard: HTMLDivElement, size: number): void {
+  let id: string = miniBoard.getAttribute("data-id");
+  let miniCircle: HTMLDivElement = createRandomCircle(miniBoard, size / 4, true);
+  miniCircle.classList.add("circle", "mini");
+  miniCircle.style.backgroundColor = getRandomColor();
+  miniCircle.setAttribute("data-id", `${id}`);
+  miniBoard.append(miniCircle);
+}
+ */
