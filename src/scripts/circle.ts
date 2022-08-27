@@ -34,40 +34,14 @@ function applyingDifficult(difficult: string): number {
   return getRandomNumber(difficultSettings[param].min, difficultSettings[param].max);
 }
 
-/**
- * Удаление вышедшего за рамки цвета и добавление нового
- * @param arrayColors{Object[]} массив цветов для градиента
- * @param offset{Number} смещение цветов относительно друг друга в '%'
- * @returns {Object[]} массив цветов для градиента
- */
-function moveGradient(arrayColors: arrayColorsRecord[], offset: number): arrayColorsRecord[] {
-  const moveOffset: number = 1;
-  for (let i = 0; i < arrayColors.length; i++) {
-    if (i === 0 && arrayColors[i + 1].position - arrayColors[i].position < offset) continue;
-
-    arrayColors[i].position += moveOffset;
-  }
-  if (arrayColors[arrayColors.length - 1].position > 100 + offset) arrayColors.length--;
-  if (arrayColors[0].position > 0) arrayColors.unshift({
-    color: getRandomColor(),
-    position: 0
-  });
-  return arrayColors;
-}
-
 export class Circle {
   protected readonly radius: number;
   protected readonly x: number;
   protected readonly y: number;
   private colors: arrayColorsRecord[] = [];
-  private readonly color: string = "rgb(54 66 78)";
   private readonly offset: number;
-  private readonly movingOffset: number = .01;
   protected readonly context: CanvasRenderingContext2D;
-  protected readonly board: HTMLCanvasElement;
   protected id: number;
-  private readonly duration: number = 100;
-  private readonly start: number;
 
   /**
    * @param difficult от выбранной сложности зависит размер круга и расцветка
@@ -75,7 +49,6 @@ export class Circle {
    */
   constructor(difficult: string, board: HTMLCanvasElement) {
     this.radius = applyingDifficult(difficult);
-    this.board = board;
     this.context = board.getContext("2d");
     const { width, height }: { width: number, height: number } = board.getBoundingClientRect();
     this.x = getRandomNumber(this.radius, width - this.radius);
@@ -87,7 +60,6 @@ export class Circle {
       } = this.createGradient());
     }
     this.draw = this.draw.bind(this);
-    this.start = performance.now();
   }
 
   /**
@@ -118,7 +90,7 @@ export class Circle {
       this.moveGradient();
       window.requestAnimationFrame(this.draw);
     } else {
-      this.context.fillStyle = (this.colors) ? this.color : "rgba(0,0,0,0)";
+      this.context.fillStyle = (this.colors) ? "rgb(54 66 78)" : "rgba(0,0,0,0)";
     }
     this.context.beginPath();
     this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
@@ -131,11 +103,11 @@ export class Circle {
   }
 
   moveGradient() {
-    if (performance.now() - this.start < this.duration) return;
     const length = this.colors.length;
+    const movingOffset = .01;
     for (let i = 0; i < length; i++) {
       if (i === 0 && this.colors[i + 1].position - this.colors[i].position < this.offset) continue;
-      this.colors[i].position = Math.round((this.colors[i].position + this.movingOffset) * 100) / 100;
+      this.colors[i].position = Math.round((this.colors[i].position + movingOffset) * 100) / 100;
 
     }
     if (this.colors[length - 1].position >= 1) this.colors[length - 1].position = 1;
@@ -152,57 +124,31 @@ export class Circle {
 
   clear() {
     this.colors = null;
+    this.draw()
     window.cancelAnimationFrame(this.id);
-    this.context.clearRect(this.x - this.radius, this.y - this.radius, this.x + this.radius, this.y + this.radius);
   }
 }
-
-/*
-function moveGradient(arrayColors: arrayColorsRecord[], offset: number): arrayColorsRecord[] {
-  const moveOffset: number = 1;
-  for (let i = 0; i < arrayColors.length; i++) {
-    if (i === 0 && arrayColors[i + 1].position - arrayColors[i].position < offset) continue;
-
-    arrayColors[i].position += moveOffset;
-  }
-  if (arrayColors[arrayColors.length - 1].position > 100 + offset) arrayColors.length--;
-  if (arrayColors[0].position > 0) arrayColors.unshift({
-    color: getRandomColor(),
-    position: 0
-  });
-  return arrayColors;
-}
- */
 
 export class MiniCircle {
   protected readonly radius: number;
-  protected readonly x: number;
-  protected readonly y: number;
-  protected readonly angle: number;
-  protected readonly radiusCircle: number;
-  protected readonly xCircle: number;
-  protected readonly yCircle: number;
-  private readonly color: string;
+  protected x: number;
+  protected y: number;
+  protected readonly k: number;
+  private color: string;
   protected readonly context: CanvasRenderingContext2D;
-  protected readonly board: HTMLCanvasElement;
-  protected readonly id: number;
+  protected id: number;
+  protected readonly idFrame: number;
 
   constructor(board: HTMLCanvasElement, x: number, y: number, radius: number, id: number) {
-    this.xCircle = x;
-    this.yCircle = y;
-    this.angle = getRandomNumber(0, 360) * (Math.PI / 180);
-    this.radiusCircle = radius;
+    const angle = getRandomNumber(0, 360) * (Math.PI / 180);
     this.radius = radius / 4;
-    this.board = board;
     this.context = board.getContext("2d");
     this.color = getRandomColor();
     this.id = id;
-
-    this.x = (radius / 2) * Math.cos(this.angle) + this.xCircle;
-    this.y = (-radius / 2) * Math.sin(this.angle) + this.yCircle;
-    console.log(this.angle);
-    console.log({ title: "parent", x, y, radius });
-    console.log({ title: "mini", x: this.x, y: this.y, radius: this.radius });
+    this.x = (radius / 2) * Math.cos(angle) + x;
+    this.y = (-radius / 2) * Math.sin(angle) + y;
+    this.k = (this.y - y) / (this.x - x);
+    this.draw = this.draw.bind(this);
   }
 
   draw() {
@@ -211,9 +157,22 @@ export class MiniCircle {
     this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     this.context.fill();
     this.context.closePath();
+    this.move();
+    window.requestAnimationFrame(this.draw);
+  }
+
+  animate() {
+    this.id = window.requestAnimationFrame(this.draw);
+  }
+
+  move() {
+    this.x += .1;
+    this.y = this.k * this.x;
   }
 
   clear() {
+    this.color = "rgba(0,0,0,0)";
+    window.cancelAnimationFrame(this.id);
     this.context.clearRect(this.x - this.radius, this.y - this.radius, this.x + this.radius, this.y + this.radius);
   }
 

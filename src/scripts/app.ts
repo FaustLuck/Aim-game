@@ -16,7 +16,8 @@ let time: number;
 let difficult: string;
 let score: number = 0;
 let timer: number;
-let circle: Circle, miniCircles: MiniCircle;
+let circle: Circle;
+let miniCircles = [];
 
 startButton.addEventListener("click", e => {
   e.preventDefault();
@@ -83,7 +84,16 @@ function clickOnCircle(e: MouseEvent): void {
   let clickCoords = { x: e.x - left, y: e.y - top };
   if (!checkClick(clickCoords)) return;
   score++;
+  let { x, y, radius, id } = circle.getInfo();
   circle.clear();
+  for (let i = 0; i < 10; i++) {
+    let miniCircle = new MiniCircle(board, x, y, radius, id);
+    miniCircles.push({
+      miniCircle,
+      id
+    });
+    miniCircle.animate();
+  }
   circle = new Circle(difficult, board);
   circle.animate();
 }
