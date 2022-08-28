@@ -81,7 +81,7 @@ export class Circle {
   /**
    * Отрисовка круга
    */
- private draw() {
+  protected draw() {
     if (this.colors?.length) {
       let gradient = this.context.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
       this.colors.forEach(({ color, position }) => gradient.addColorStop(position, color));
@@ -102,13 +102,13 @@ export class Circle {
   }
 
  protected clearArc() {
-    this.context.save();
-    this.context.globalCompositeOperation = "destination-out";
-    this.context.beginPath();
-    this.context.arc(this.x, this.y, this.radius + 1, 0, 2 * Math.PI);
-    this.context.fill();
-    this.context.restore();
-  }
+   this.context.save();
+   this.context.globalCompositeOperation = "destination-out";
+   this.context.beginPath();
+   this.context.arc(this.x, this.y, this.radius + 2, 0, 2 * Math.PI);
+   this.context.fill();
+   this.context.restore();
+ }
 
  private moveGradient() {
     const length = this.colors.length;
@@ -137,33 +137,31 @@ export class Circle {
   }
 }
 
-export class MiniCircle {
+export class MiniCircle extends Circle {
   protected radius: number;
   protected x: number;
   protected y: number;
   private readonly color: string;
-  protected readonly context: CanvasRenderingContext2D;
   protected start: number;
   protected idFrame: number;
   private readonly deltaRadius: number;
   private readonly deltaX: number;
   private readonly deltaY: number;
 
-  constructor(board: HTMLCanvasElement, x: number, y: number, radius: number) {
+  constructor(board: HTMLCanvasElement, x: number, y: number, radius: number, difficult: string) {
+    super(difficult, board);
     const angle = getRandomNumber(0, 360) * (Math.PI / 180);
     this.radius = radius / 4;
-    this.context = board.getContext("2d");
     this.color = getRandomColor();
     this.start = performance.now();
     this.x = (radius / 2) * Math.cos(angle) + x;
     this.y = (-radius / 2) * Math.sin(angle) + y;
     this.deltaX = 1.5 * radius * Math.cos(angle) / 100;
     this.deltaRadius = -this.radius / 100;
-    this.draw = this.draw.bind(this);
     this.deltaY = -1.5 * radius * Math.sin(angle) / 100;
   }
 
-  private draw() {
+  protected draw() {
     if (this.radius + this.deltaRadius <= 0) return this.clear();
     this.clearArc();
     this.context.beginPath();
@@ -178,16 +176,6 @@ export class MiniCircle {
   animate() {
     this.idFrame = window.requestAnimationFrame(this.draw);
   }
-
-  private clearArc() {
-    this.context.save();
-    this.context.globalCompositeOperation = "destination-out";
-    this.context.beginPath();
-    this.context.arc(this.x, this.y, this.radius + 1, 0, 2 * Math.PI);
-    this.context.fill();
-    this.context.restore();
-  }
-
 
   private move() {
     this.x += this.deltaX;

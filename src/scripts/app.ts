@@ -10,7 +10,7 @@ const screens = document.querySelectorAll(".screen");
 const settingsButtons = document.querySelector(".settings");
 const timeEl = document.querySelector("#time");
 const board: HTMLCanvasElement = document.querySelector("#board");
-const warning = document.querySelector(".screen-popup.warning");
+const warningWindow = document.querySelector(".screen-popup.warning");
 
 let time: number;
 let difficult: string;
@@ -86,10 +86,12 @@ function clickOnCircle(e: MouseEvent): void {
   score++;
   let { x, y, radius } = circle.getInfo();
   circle.clear();
-  for (let i = 0; i < 10; i++) {
-    let miniCircle = new MiniCircle(board, x, y, radius);
-    miniCircles.push(miniCircle);
-    miniCircle.animate();
+  if (difficult !== "nightmare") {
+    for (let i = 0; i < 10; i++) {
+      let miniCircle = new MiniCircle(board, x, y, radius, difficult);
+      miniCircles.push(miniCircle);
+      miniCircle.animate();
+    }
   }
   circle = new Circle(difficult, board);
   circle.animate();
@@ -151,6 +153,7 @@ function finishGame(): void {
     miniCircle.clear();
     return null;
   });
+  miniCircles.length = 0;
   clearBoard();
   let parentNode: HTMLElement = timeEl.parentNode as HTMLHeadingElement;
   parentNode.classList.add("hide");
@@ -188,7 +191,7 @@ function showWarning(): void {
   const agreementWithNightmare: string = window.localStorage.getItem("agreementWithNightmare");
   if (agreementWithNightmare === "true") return;
   overlay.classList.add("open");
-  warning.classList.add("open");
+  warningWindow.classList.add("open");
 }
 
 /**
@@ -197,7 +200,8 @@ function showWarning(): void {
  */
 function closeWarning(): void {
   overlay.classList.remove("open");
-  warning.classList.remove("open");
+  warningWindow.classList.remove("open");
   window.localStorage.setItem("agreementWithNightmare", "true");
 }
+
 
