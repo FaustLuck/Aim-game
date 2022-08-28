@@ -108,9 +108,9 @@ export class MiniCircle extends Circle {
   protected radius: number;
   protected x: number;
   protected y: number;
-  private readonly color: string;
+  private color: string;
   protected start: number;
-  protected idFrame: number;
+  protected id: number;
   private readonly deltaRadius: number;
   private readonly deltaX: number;
   private readonly deltaY: number;
@@ -141,7 +141,7 @@ export class MiniCircle extends Circle {
   }
 
   animate() {
-    this.idFrame = window.requestAnimationFrame(this.draw);
+    this.id = window.requestAnimationFrame(this.draw);
   }
 
   private move() {
@@ -151,7 +151,8 @@ export class MiniCircle extends Circle {
   }
 
   clear() {
-    window.cancelAnimationFrame(this.idFrame);
+    window.cancelAnimationFrame(this.id);
+    this.color = "rgba(0,0,0,0)";
     this.clearArc();
   }
 }
