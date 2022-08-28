@@ -62,7 +62,7 @@ function saveSettings(e: Event): void {
   if (target.classList.contains("start-btn")) {
     score = 0;
     screens[1].classList.add("up");
-    screens[1].addEventListener("transitionend", startGame);
+    setTimeout(startGame, 1000);
   }
 }
 
@@ -107,7 +107,6 @@ function clickOnCircle(e: MouseEvent): void {
  * На основании выбранных настроек начинает игру
  */
 function startGame(): void {
-  if (!screens[1].classList.contains("up")) return;
   context.clearRect(0, 0, board.width, board.height);
 
   ({ width: board.width, height: board.height } = board.getBoundingClientRect());
