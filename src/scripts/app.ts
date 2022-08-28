@@ -111,7 +111,7 @@ function createCircle() {
     circleTimer = window.setTimeout(() => {
       circle.clear();
       createCircle();
-    }, 1000);
+    }, 1500);
   }
 }
 
