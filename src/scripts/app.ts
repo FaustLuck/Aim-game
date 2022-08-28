@@ -1,8 +1,8 @@
-import { calculateScore, overlay } from "./utils";
+import { calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
 import { Circle, MiniCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
 import { findGlobalPlace } from "./globalStatistic";
-// import { PreTimer } from "./preTimer";
+import { PreTimer } from "./preTimer";
 
 
 const startButton = document.querySelector(".start");
@@ -11,6 +11,8 @@ const settingsButtons = document.querySelector(".settings");
 const timeEl = document.querySelector("#time");
 const board: HTMLCanvasElement = document.querySelector("#board");
 const warningWindow = document.querySelector(".screen-popup.warning");
+
+const context = board.getContext("2d");
 
 let time: number;
 let difficult: string;
@@ -87,7 +89,11 @@ function clickOnCircle(e: MouseEvent): void {
   let { x, y, radius } = circle.getInfo();
   circle.clear();
   if (difficult !== "nightmare") {
-    for (let i = 0; i < 10; i++) {
+    let { min, max } = difficultSettings.find(el => el.difficult === difficult);
+    max = Math.round(max / 3);
+    min = Math.round(min / 3);
+    let count = getRandomNumber(min, max);
+    for (let i = 0; i <= count; i++) {
       let miniCircle = new MiniCircle(board, x, y, radius, difficult);
       miniCircles.push(miniCircle);
       miniCircle.animate();
@@ -102,26 +108,22 @@ function clickOnCircle(e: MouseEvent): void {
  */
 function startGame(): void {
   if (!screens[1].classList.contains("up")) return;
-  clearBoard();
+  context.clearRect(0, 0, board.width, board.height);
+
   ({ width: board.width, height: board.height } = board.getBoundingClientRect());
   difficult = document.querySelector(".difficult-btn.selected")?.getAttribute("data-difficult");
   time = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
+
   let parentNode: HTMLElement = timeEl.parentNode as HTMLHeadingElement;
   parentNode.classList.remove("hide");
 
-  /*
-   let preTimer = new PreTimer(board).start();
-    preTimer.then(() => {
-      circle = new Circle(difficult, board);
-      circle.draw()
-
-    });
-    */
-  // todo ^^ вернуть на место. вызов отсчета перед стартом. вызов отрисовки кругов
-  setTime(time);
-  circle = new Circle(difficult, board);
-  circle.animate();
-  timer = window.setInterval(decreaseTime, 1000);
+  let preTimer = new PreTimer(board).start();
+  preTimer.then(() => {
+    setTime(time);
+    circle = new Circle(difficult, board);
+    circle.animate();
+    timer = window.setInterval(decreaseTime, 1000);
+  });
 }
 
 
@@ -154,10 +156,10 @@ function finishGame(): void {
     return null;
   });
   miniCircles.length = 0;
-  clearBoard();
+  context.clearRect(0, 0, board.width, board.height);
   let parentNode: HTMLElement = timeEl.parentNode as HTMLHeadingElement;
   parentNode.classList.add("hide");
-  showScore();
+  setTimeout(showScore, 0);
   let timeStart: number = +document.querySelector(".time-btn.selected")?.getAttribute("data-time");
   let points: number = calculateScore(score, difficult, timeStart);
   setLocalStatistic(points);
@@ -167,15 +169,9 @@ function finishGame(): void {
   }, 1500);
 }
 
-function clearBoard() {
-  let context = board.getContext("2d");
-  context.clearRect(0, 0, board.width, board.height);
-}
-
 
 function showScore() {
-  clearBoard();
-  let context = board.getContext("2d");
+  context.clearRect(0, 0, board.width, board.height);
   context.textBaseline = "middle";
   context.textAlign = "center";
   context.font = `7rem Khula sans-serif`;

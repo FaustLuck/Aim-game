@@ -1,7 +1,7 @@
 export const overlay: HTMLDivElement = document.querySelector(".overlay");
 export type statisticRecordType = { date: number, score: number, player: string }
 
-export type difficultSettingsRecord = { difficult: string, min: number, max: number, coefficient: number }
+export type difficultSettingsRecord =  {difficult: string, min: number, max: number, coefficient: number }
 export const difficultSettings: difficultSettingsRecord[] = [
   { difficult: "easy", min: 30, max: 40, coefficient: 1 },
   { difficult: "medium", min: 20, max: 30, coefficient: 3 },
@@ -69,4 +69,35 @@ export function createRecordStatistic(score: number, player: string = ""): stati
     score,
     player
   };
+}
+
+/**
+ * Возвращает случайное целое число из заданного интервала
+ * @param min минимальное значение
+ * @param max максимальное значение
+ * @returns {number} случайное число
+ */
+export function getRandomNumber(min: number, max: number): number {
+  return Math.round(Math.random() * (max - min) + min);
+}
+
+/**
+ * Генерирует случайный цвет в формате rgb(red,green,blue)
+ * @returns {string} строка rgb для css свойства background-color
+ */
+export function getRandomColor(): string {
+  let r = getRandomNumber(0, 255);
+  let g = getRandomNumber(0, 255);
+  let b = getRandomNumber(0, 255);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+/**
+ * Генерация размера цели в зависимости от выбранной сложности
+ * @param difficult {String}- уровень сложности
+ * @returns {number} случайный размер
+ */
+export function applyingDifficult(difficult: string): number {
+  let param: number = difficultSettings.findIndex(el => el.difficult === difficult);
+  return getRandomNumber(difficultSettings[param].min, difficultSettings[param].max);
 }

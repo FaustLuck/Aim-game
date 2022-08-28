@@ -1,43 +1,10 @@
-import { difficultSettings } from "./utils";
-
-type arrayColorsRecord = { color: string; position: number }
-
-/**
- * Возвращает случайное целое число из заданного интервала
- * @param min минимальное значение
- * @param max максимальное значение
- * @returns {number} случайное число
- */
-function getRandomNumber(min: number, max: number): number {
-  return Math.round(Math.random() * (max - min) + min);
-}
-
-/**
- * Генерирует случайный цвет в формате rgb(red,green,blue)
- * @returns {string} строка rgb для css свойства background-color
- */
-function getRandomColor(): string {
-  let r = getRandomNumber(0, 255);
-  let g = getRandomNumber(0, 255);
-  let b = getRandomNumber(0, 255);
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-/**
- * Генерация размера цели в зависимости от выбранной сложности
- * @param difficult {String}- уровень сложности
- * @returns {number} случайный размер
- */
-function applyingDifficult(difficult: string): number {
-  let param: number = difficultSettings.findIndex(el => el.difficult === difficult);
-  return getRandomNumber(difficultSettings[param].min, difficultSettings[param].max);
-}
+import { applyingDifficult, getRandomColor, getRandomNumber } from "./utils";
 
 export class Circle {
   protected readonly radius: number;
   protected readonly x: number;
   protected readonly y: number;
-  private colors: arrayColorsRecord[] = [];
+  private colors: { color: string; position: number }[] = [];
   private readonly offset: number;
   protected readonly context: CanvasRenderingContext2D;
   protected id: number;
@@ -68,7 +35,7 @@ export class Circle {
    */
   private createGradient() {
     const colorsCount: number = getRandomNumber(2, Math.round(this.radius / 5)) + 2;
-    let array: arrayColorsRecord[] = [];
+    let array: { color: string; position: number }[] = [];
     let offset: number = 1 / (colorsCount - 1);
     let position: number = 0;
     for (let i = 0; i < colorsCount; i++) {
@@ -157,8 +124,8 @@ export class MiniCircle extends Circle {
     this.x = (radius / 2) * Math.cos(angle) + x;
     this.y = (-radius / 2) * Math.sin(angle) + y;
     this.deltaX = 1.5 * radius * Math.cos(angle) / 100;
-    this.deltaRadius = -this.radius / 100;
     this.deltaY = -1.5 * radius * Math.sin(angle) / 100;
+    this.deltaRadius = -this.radius / 100;
   }
 
   protected draw() {

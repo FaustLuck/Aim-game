@@ -50,15 +50,6 @@ function setLocalStory(currentGameStatistic: statisticRecordType): void {
   window.localStorage.setItem("lastGames", JSON.stringify(lastGames));
 }
 
-//todo
-/*
-localStatistic.ts:66 Uncaught TypeError: Cannot read properties of undefined (reading 'score')
-    at setLocalTopScore (localStatistic.ts:66:32)
-    at setLocalStatistic (localStatistic.ts:16:3)
-    at finishGame (app.ts:149:20)
-    at decreaseTime (app.ts:123:28)
- */
-
 /**
  * Запрос из localStorage данные о лучшей игре
  */
@@ -72,7 +63,7 @@ function getLocalTopScore(): void {
  * @param currentGameStatistic{statisticRecordType} статистика текущей игры
  */
 function setLocalTopScore(currentGameStatistic: statisticRecordType): void {
-  console.log("top", topRecord.score);
+  console.log("top", topRecord);
   console.log("current", currentGameStatistic.score);
   console.log(topRecord.score < currentGameStatistic.score);
   if (!topRecord?.score || topRecord.score < currentGameStatistic.score) {
@@ -88,3 +79,5 @@ function fillTopLocalScore(): void {
   topRecordInfo.querySelector(".top-score").innerHTML = `${topRecord.score}`;
   topRecordInfo.querySelector(".top-date").innerHTML = prepareDate(topRecord.date);
 }
+
+getLocalStatistic();
