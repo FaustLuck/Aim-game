@@ -1,4 +1,3 @@
-export let timerCircle: number;
 import { difficultSettings } from "./utils";
 
 type arrayColorsRecord = { color: string; position: number }
@@ -67,7 +66,7 @@ export class Circle {
    * @returns {{arrayColors: String[], offset: number}} массив с цветом и смещением в '%'
    * offset смещение цветов относительно друг друга [0,1]
    */
-  protected createGradient() {
+  private createGradient() {
     const colorsCount: number = getRandomNumber(2, Math.round(this.radius / 5)) + 2;
     let array: arrayColorsRecord[] = [];
     let offset: number = 1 / (colorsCount - 1);
@@ -82,7 +81,7 @@ export class Circle {
   /**
    * Отрисовка круга
    */
-  draw() {
+ private draw() {
     if (this.colors?.length) {
       let gradient = this.context.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
       this.colors.forEach(({ color, position }) => gradient.addColorStop(position, color));
@@ -98,11 +97,20 @@ export class Circle {
     this.context.closePath();
   }
 
-  animate() {
-    (this.colors.length) ? this.id = window.requestAnimationFrame(this.draw) : this.draw();
+ animate() {
+    (this.colors?.length) ? this.id = window.requestAnimationFrame(this.draw) : this.draw();
   }
 
-  moveGradient() {
+ protected clearArc() {
+    this.context.save();
+    this.context.globalCompositeOperation = "destination-out";
+    this.context.beginPath();
+    this.context.arc(this.x, this.y, this.radius + 1, 0, 2 * Math.PI);
+    this.context.fill();
+    this.context.restore();
+  }
+
+ private moveGradient() {
     const length = this.colors.length;
     const movingOffset = .01;
     for (let i = 0; i < length; i++) {
@@ -118,42 +126,48 @@ export class Circle {
     });
   }
 
-  getInfo() {
-    return { x: this.x, y: this.y, radius: this.radius, id: this.id };
+ getInfo() {
+    return { x: this.x, y: this.y, radius: this.radius };
   }
 
-  clear() {
-    this.colors = null;
-    this.draw()
+ clear() {
     window.cancelAnimationFrame(this.id);
+    this.colors = null;
+    this.clearArc();
   }
 }
 
 export class MiniCircle {
-  protected readonly radius: number;
+  protected radius: number;
   protected x: number;
   protected y: number;
-  protected readonly k: number;
-  private color: string;
+  private readonly color: string;
   protected readonly context: CanvasRenderingContext2D;
-  protected id: number;
-  protected readonly idFrame: number;
+  protected start: number;
+  protected idFrame: number;
+  private readonly deltaRadius: number;
+  private readonly deltaX: number;
+  private readonly deltaY: number;
 
-  constructor(board: HTMLCanvasElement, x: number, y: number, radius: number, id: number) {
+  constructor(board: HTMLCanvasElement, x: number, y: number, radius: number) {
     const angle = getRandomNumber(0, 360) * (Math.PI / 180);
     this.radius = radius / 4;
     this.context = board.getContext("2d");
     this.color = getRandomColor();
-    this.id = id;
+    this.start = performance.now();
     this.x = (radius / 2) * Math.cos(angle) + x;
     this.y = (-radius / 2) * Math.sin(angle) + y;
-    this.k = (this.y - y) / (this.x - x);
+    this.deltaX = 1.5 * radius * Math.cos(angle) / 100;
+    this.deltaRadius = -this.radius / 100;
     this.draw = this.draw.bind(this);
+    this.deltaY = -1.5 * radius * Math.sin(angle) / 100;
   }
 
-  draw() {
-    this.context.fillStyle = this.color;
+  private draw() {
+    if (this.radius + this.deltaRadius <= 0) return this.clear();
+    this.clearArc();
     this.context.beginPath();
+    this.context.fillStyle = this.color;
     this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     this.context.fill();
     this.context.closePath();
@@ -162,18 +176,27 @@ export class MiniCircle {
   }
 
   animate() {
-    this.id = window.requestAnimationFrame(this.draw);
+    this.idFrame = window.requestAnimationFrame(this.draw);
   }
 
-  move() {
-    this.x += .1;
-    this.y = this.k * this.x;
+  private clearArc() {
+    this.context.save();
+    this.context.globalCompositeOperation = "destination-out";
+    this.context.beginPath();
+    this.context.arc(this.x, this.y, this.radius + 1, 0, 2 * Math.PI);
+    this.context.fill();
+    this.context.restore();
+  }
+
+
+  private move() {
+    this.x += this.deltaX;
+    this.y += this.deltaY;
+    this.radius += this.deltaRadius;
   }
 
   clear() {
-    this.color = "rgba(0,0,0,0)";
-    window.cancelAnimationFrame(this.id);
-    this.context.clearRect(this.x - this.radius, this.y - this.radius, this.x + this.radius, this.y + this.radius);
+    window.cancelAnimationFrame(this.idFrame);
+    this.clearArc();
   }
-
 }

@@ -17,7 +17,7 @@ let difficult: string;
 let score: number = 0;
 let timer: number;
 let circle: Circle;
-let miniCircles = [];
+let miniCircles: MiniCircle[] = [];
 
 startButton.addEventListener("click", e => {
   e.preventDefault();
@@ -84,14 +84,11 @@ function clickOnCircle(e: MouseEvent): void {
   let clickCoords = { x: e.x - left, y: e.y - top };
   if (!checkClick(clickCoords)) return;
   score++;
-  let { x, y, radius, id } = circle.getInfo();
+  let { x, y, radius } = circle.getInfo();
   circle.clear();
   for (let i = 0; i < 10; i++) {
-    let miniCircle = new MiniCircle(board, x, y, radius, id);
-    miniCircles.push({
-      miniCircle,
-      id
-    });
+    let miniCircle = new MiniCircle(board, x, y, radius);
+    miniCircles.push(miniCircle);
     miniCircle.animate();
   }
   circle = new Circle(difficult, board);
@@ -150,6 +147,10 @@ function finishGame(): void {
   clearInterval(timer);
   circle.clear();
   circle = null;
+  miniCircles = miniCircles.map(miniCircle => {
+    miniCircle.clear();
+    return null;
+  });
   clearBoard();
   let parentNode: HTMLElement = timeEl.parentNode as HTMLHeadingElement;
   parentNode.classList.add("hide");
