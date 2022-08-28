@@ -63,9 +63,6 @@ function getLocalTopScore(): void {
  * @param currentGameStatistic{statisticRecordType} статистика текущей игры
  */
 function setLocalTopScore(currentGameStatistic: statisticRecordType): void {
-  console.log("top", topRecord);
-  console.log("current", currentGameStatistic.score);
-  console.log(topRecord.score < currentGameStatistic.score);
   if (!topRecord?.score || topRecord.score < currentGameStatistic.score) {
     topRecord = currentGameStatistic;
     window.localStorage.setItem("topRecord", JSON.stringify(topRecord));
