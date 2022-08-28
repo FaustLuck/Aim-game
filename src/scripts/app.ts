@@ -184,7 +184,9 @@ function showScore() {
   context.clearRect(0, 0, board.width, board.height);
   context.textBaseline = "middle";
   context.textAlign = "center";
-  context.font = `7rem Khula sans-serif`;
+  let size: number = 7;
+  if (window.matchMedia("screen and (max-width: 768px)").matches) size = 4;
+  context.font = `${size}rem Khula sans-serif`;
   context.fillStyle = `#16D9E3`;
   let text = `Счет: ${score}`;
   context.fillText(text, board.width / 2, board.height / 2);
