@@ -20,6 +20,7 @@ let score: number = 0;
 let timer: number;
 let circle: Circle;
 let miniCircles: MiniCircle[] = [];
+let circleTimer: number;
 
 startButton.addEventListener("click", e => {
   e.preventDefault();
@@ -99,8 +100,19 @@ function clickOnCircle(e: MouseEvent): void {
       miniCircle.animate();
     }
   }
+  createCircle();
+}
+
+function createCircle() {
   circle = new Circle(difficult, board);
   circle.animate();
+  if (difficult === "nightmare") {
+    window.clearTimeout(circleTimer);
+    circleTimer = window.setTimeout(() => {
+      circle.clear();
+      createCircle();
+    }, 1000);
+  }
 }
 
 /**
@@ -119,8 +131,7 @@ function startGame(): void {
   let preTimer = new PreTimer(board).start();
   preTimer.then(() => {
     setTime(time);
-    circle = new Circle(difficult, board);
-    circle.animate();
+    createCircle();
     timer = window.setInterval(decreaseTime, 1000);
   });
 }

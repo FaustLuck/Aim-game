@@ -65,8 +65,8 @@ export class Circle {
   }
 
  animate() {
-    (this.colors?.length) ? this.id = window.requestAnimationFrame(this.draw) : this.draw();
-  }
+   (this.colors?.length) ? this.id = window.requestAnimationFrame(this.draw) : this.draw();
+ }
 
  protected clearArc() {
    this.context.save();
