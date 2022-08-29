@@ -1,4 +1,5 @@
 export const overlay: HTMLDivElement = document.querySelector(".overlay");
+export const authorInfo :HTMLElement=document.querySelector('footer');
 export type statisticRecordType = { date: number, score: number, player: string }
 
 export type difficultSettingsRecord =  {difficult: string, min: number, max: number, coefficient: number }

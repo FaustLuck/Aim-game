@@ -1,4 +1,4 @@
-import { calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
+import { authorInfo, calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
 import { Circle, MiniCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
 import { findGlobalPlace } from "./globalStatistic";
@@ -42,6 +42,7 @@ function closePopup(e: Event): void {
   target.classList.remove("open");
   let ledge: Element | null = target.querySelector(".ledge") || null;
   overlay.classList.remove("open");
+  authorInfo.classList.remove("show");
   if (ledge) ledge.classList.remove("hide");
 }
 
