@@ -443,12 +443,13 @@ footer {
   box-shadow: -8px -8px 20px #2A333D, 10px 7px 20px #475462;
   border-radius: 30px;
   overflow: hidden;
+  margin-bottom: 15vh;
   @media screen and (max-width: 768px) {
     width: 80vw;
   }
   @media screen and (max-height: 650px) {
     height: 60vh;
-    margin-bottom: 15vh;
+
   }
 }
 
