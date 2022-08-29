@@ -42,7 +42,7 @@ function closePopup(e: Event): void {
   target.classList.remove("open");
   let ledge: Element | null = target.querySelector(".ledge") || null;
   overlay.classList.remove("open");
-  authorInfo.classList.remove("show");
+  // authorInfo.classList.remove("show");
   if (ledge) ledge.classList.remove("hide");
 }
 

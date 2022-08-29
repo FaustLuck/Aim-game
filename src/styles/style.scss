@@ -43,16 +43,18 @@ footer {
   align-items: center;
   justify-content: center;
   height: 3rem;
-  bottom: -3rem;
+  //bottom: -3rem;
+  bottom: 0;
+  z-index: 10;
   width: 100%;
   background: #1c2836;
   box-shadow: 0px -10px 10px 4px #1c2836bf;
   transition: bottom .5s linear;
 
-  &.show {
-    bottom: 0;
-    z-index: 2;
-  }
+  //&.show {
+  //  bottom: 0;
+  //  z-index: 2;
+  //}
 
   a {
     color: #6a7889;
@@ -446,6 +448,7 @@ footer {
   }
   @media screen and (max-height: 650px) {
     height: 60vh;
+    margin-bottom: 15vh;
   }
 }
 
