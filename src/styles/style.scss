@@ -438,6 +438,7 @@ h1 {
 .top-record {
   display: inline-flex;
   justify-content: center;
+  align-items: center;
   border: 3px solid black;
   @media screen and (max-width: 768px) {
     display: flex;
