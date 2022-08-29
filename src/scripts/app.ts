@@ -1,4 +1,4 @@
-import { authorInfo, calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
+import { calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
 import { Circle, MiniCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
 import { findGlobalPlace } from "./globalStatistic";

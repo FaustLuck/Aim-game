@@ -91,12 +91,22 @@ footer {
 
 .screen {
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
   width: 100vw;
   transition: margin .5s ease-out;
+
+  &.screen-board {
+    justify-content: flex-start;
+    margin-top: 3rem;
+
+    h3 {
+      margin: 0 0 .5rem 0;
+    }
+  }
 
   &.up {
     margin-top: -100vh;
@@ -433,10 +443,6 @@ footer {
 }
 
 .board {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
   width: 500px;
   height: 500px;
   background: linear-gradient(118.38deg, #29323C -4.6%, #485563 200.44%);

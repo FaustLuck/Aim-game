@@ -1,4 +1,4 @@
-import { authorInfo, overlay } from "./utils";
+import { overlay } from "./utils";
 import {getLocalStatistic} from "./localStatistic";
 
 const tabs: Element = document.querySelector(".tabs");
@@ -30,7 +30,6 @@ function closeStatistic(): void {
     openButton.classList.remove("hide");
     screenStatistic.classList.remove("open");
     overlay.classList.remove("open");
-    // authorInfo.classList.remove('show')
 }
 
 /**
@@ -40,6 +39,5 @@ function openStatistic(): void {
     openButton.classList.add("hide");
     screenStatistic.classList.add("open");
     overlay.classList.add("open");
-    // authorInfo.classList.add('show')
     getLocalStatistic();
 }
