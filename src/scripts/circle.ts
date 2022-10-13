@@ -7,7 +7,6 @@ export class Circle {
   private colors: { color: string; position: number }[] = [];
   private readonly offset: number;
   protected readonly context: CanvasRenderingContext2D;
-  protected id: number;
 
   /**
    * @param difficult от выбранной сложности зависит размер круга и расцветка
@@ -48,42 +47,31 @@ export class Circle {
   /**
    * Отрисовка круга
    */
-  protected draw() {
+  public draw() {
     if (this.colors?.length) {
       let gradient = this.context.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
       this.colors.forEach(({ color, position }) => gradient.addColorStop(position, color));
       this.context.fillStyle = gradient;
-      this.moveGradient();
-      window.requestAnimationFrame(this.draw);
     } else {
-      this.context.fillStyle = (this.colors) ? "rgb(54 66 78)" : "rgba(0,0,0,0)";
+      this.context.fillStyle = "rgb(54 66 78)";
     }
     this.context.beginPath();
     this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     this.context.fill();
     this.context.closePath();
+    if (this.colors?.length) this.update();
   }
 
- animate() {
-   (this.colors?.length) ? this.id = window.requestAnimationFrame(this.draw) : this.draw();
- }
-
- protected clearArc() {
-   this.context.save();
-   this.context.globalCompositeOperation = "destination-out";
-   this.context.beginPath();
-   this.context.arc(this.x, this.y, this.radius + 2, 0, 2 * Math.PI);
-   this.context.fill();
-   this.context.restore();
- }
-
- private moveGradient() {
+  /**
+   * Обновление градиента при сложности ниже "кошмар"
+   * @protected
+   */
+  protected update() {
     const length = this.colors.length;
     const movingOffset = .01;
     for (let i = 0; i < length; i++) {
       if (i === 0 && this.colors[i + 1].position - this.colors[i].position < this.offset) continue;
       this.colors[i].position = Math.round((this.colors[i].position + movingOffset) * 100) / 100;
-
     }
     if (this.colors[length - 1].position >= 1) this.colors[length - 1].position = 1;
     if (this.colors[length - 2].position >= 1) this.colors.length--;
@@ -93,14 +81,11 @@ export class Circle {
     });
   }
 
- getInfo() {
+  /**
+   * Координаты круга
+   */
+  public getInfo() {
     return { x: this.x, y: this.y, radius: this.radius };
-  }
-
- clear() {
-    window.cancelAnimationFrame(this.id);
-    this.colors = null;
-    this.clearArc();
   }
 }
 
@@ -108,9 +93,7 @@ export class MiniCircle extends Circle {
   protected radius: number;
   protected x: number;
   protected y: number;
-  private color: string;
-  protected start: number;
-  protected id: number;
+  private readonly color: string;
   private readonly deltaRadius: number;
   private readonly deltaX: number;
   private readonly deltaY: number;
@@ -120,7 +103,6 @@ export class MiniCircle extends Circle {
     const angle = getRandomNumber(0, 360) * (Math.PI / 180);
     this.radius = radius / 4;
     this.color = getRandomColor();
-    this.start = performance.now();
     this.x = (radius / 2) * Math.cos(angle) + x;
     this.y = (-radius / 2) * Math.sin(angle) + y;
     this.deltaX = 1.5 * radius * Math.cos(angle) / 100;
@@ -128,31 +110,25 @@ export class MiniCircle extends Circle {
     this.deltaRadius = -this.radius / 100;
   }
 
-  protected draw() {
-    if (this.radius + this.deltaRadius <= 0) return this.clear();
-    this.clearArc();
+  /**
+   * Отрисовка круга
+   */
+  public draw() {
     this.context.beginPath();
     this.context.fillStyle = this.color;
     this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     this.context.fill();
     this.context.closePath();
-    this.move();
-    window.requestAnimationFrame(this.draw);
+    this.update();
   }
 
-  animate() {
-    this.id = window.requestAnimationFrame(this.draw);
-  }
-
-  private move() {
+  /**
+   * Движение "осколка"
+   * @protected
+   */
+  protected update() {
     this.x += this.deltaX;
     this.y += this.deltaY;
     this.radius += this.deltaRadius;
-  }
-
-  clear() {
-    window.cancelAnimationFrame(this.id);
-    this.color = "rgba(0,0,0,0)";
-    this.clearArc();
   }
 }
