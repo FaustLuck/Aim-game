@@ -26,7 +26,7 @@ startButton.addEventListener("click", e => {
   screens[0].classList.add("up");
 });
 settingsButtons.addEventListener("click", saveSettings);
-board.addEventListener("click", clickOnCircle);
+board.addEventListener("pointerdown", clickOnCircle);
 document.querySelector(".warning-btn").addEventListener("click", closeWarning);
 document.addEventListener("click", closePopup);
 
@@ -77,11 +77,16 @@ function checkClick(clickCoords: { x: number, y: number }, circle: Circle): bool
   return (clickCoords.x - x) ** 2 + (clickCoords.y - y) ** 2 <= radius ** 2;
 }
 
+/*
+
+ */
+
+
 /**
  * "Лопает" нажатый круг
  * @param e{Event} клик на круге
  */
-function clickOnCircle(e: MouseEvent): void {
+function clickOnCircle(e: PointerEvent): void {
   if (!circles.length) return;
   const index = circles.findIndex(c => c.constructor.name === "Circle");
   const circle = circles[index];
