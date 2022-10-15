@@ -34,7 +34,7 @@ document.addEventListener("click", closePopup);
  * @param e{Event} событие клика
  */
 function closePopup(e: Event): void {
-  let target: HTMLElement = e.target as HTMLElement;
+  const target: HTMLElement = e.target as HTMLElement;
   if (!target.classList.contains("screen-popup")) return;
   if (!target.classList.contains("open")) return;
   target.classList.remove("open");
@@ -53,6 +53,7 @@ function saveSettings(e: Event): void {
     settingsButtons.querySelectorAll(".difficult-btn").forEach(el => el.classList.remove("selected"));
     target.classList.add("selected");
     if (target.getAttribute("data-difficult") === "nightmare") showWarning();
+    if (target.getAttribute("data-difficult") !== "nightmare") document.body.classList.remove("nightmare");
   }
   if (target.classList.contains("time-btn")) {
     settingsButtons.querySelectorAll(".time-btn").forEach(el => el.classList.remove("selected"));
@@ -114,7 +115,6 @@ function clickOnCircle(e: PointerEvent): void {
       circles.push(miniCircle);
     }
   }
-
   createCircle();
 }
 
@@ -219,7 +219,10 @@ function showScore() {
  */
 function showWarning(): void {
   const agreementWithNightmare: string = window.localStorage.getItem("agreementWithNightmare");
-  if (agreementWithNightmare === "true") return;
+  if (agreementWithNightmare === "true") {
+    document.body.classList.add("nightmare");
+    return;
+  }
   overlay.classList.add("open");
   warningWindow.classList.add("open");
 }
@@ -232,6 +235,7 @@ function closeWarning(): void {
   overlay.classList.remove("open");
   warningWindow.classList.remove("open");
   window.localStorage.setItem("agreementWithNightmare", "true");
+  document.body.classList.add("nightmare");
 }
 
 
