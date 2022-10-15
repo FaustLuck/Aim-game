@@ -5,6 +5,7 @@
 }
 
 body {
+  height: 100vh;
   position: relative;
   color: #fff;
   font-family: 'Khula', sans-serif;
@@ -43,18 +44,12 @@ footer {
   align-items: center;
   justify-content: center;
   height: 3rem;
-  //bottom: -3rem;
   bottom: 0;
   z-index: 10;
   width: 100%;
   background: #1c2836;
   box-shadow: 0px -10px 10px 4px #1c2836bf;
   transition: bottom .5s linear;
-
-  //&.show {
-  //  bottom: 0;
-  //  z-index: 2;
-  //}
 
   a {
     color: #6a7889;
@@ -91,16 +86,22 @@ footer {
 
 .screen {
   display: flex;
-  position: relative;
+  position: absolute;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
   width: 100vw;
-  transition: margin .5s ease-out;
+  margin-top: -100vh;
 
-  &.up {
-    margin-top: -100vh;
+  &.down {
+    margin-top: 100vh;
+    transition: margin-top .5s ease-out;
+  }
+
+  &.current {
+    margin-top: 0;
+    transition: margin-top .5s cubic-bezier(1, .24, .66, 1.43);
   }
 }
 

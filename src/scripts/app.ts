@@ -20,12 +20,9 @@ let timer: number;
 let circles: (Circle | MiniCircle)[] = [];
 let circleTimer: number;
 
-window.onload = () => setTimeout(() => {
-  window.scrollTo(0, 0);
-}, 0);
 startButton.addEventListener("click", e => {
   e.preventDefault();
-  screens[0].classList.add("up");
+  changeSlide(1, 0);
 });
 settingsButtons.addEventListener("click", saveSettings);
 board.addEventListener("pointerdown", clickOnCircle);
@@ -63,9 +60,23 @@ function saveSettings(e: Event): void {
   }
   if (target.classList.contains("start-btn")) {
     score = 0;
-    screens[1].classList.add("up");
+    changeSlide(2, 1);
     setTimeout(startGame, 1000);
   }
+}
+
+/**
+ *
+ * @param tarIndex индекс целевого экрана
+ * @param curIndex индекс текущего экрана
+ */
+function changeSlide(tarIndex: number, curIndex: number): void {
+  screens[curIndex].classList.toggle("current");
+  screens[curIndex].classList.toggle("down");
+  screens[curIndex].addEventListener('transitionend',()=>{
+    screens[curIndex].classList.toggle("down");
+  })
+  screens[tarIndex].classList.toggle("current");
 }
 
 /**
@@ -184,7 +195,7 @@ function finishGame(): void {
   setLocalStatistic(points);
   findGlobalPlace(points);
   setTimeout(() => {
-    screens[1].classList.remove("up");
+    changeSlide(1, 2);
   }, 1500);
 }
 
