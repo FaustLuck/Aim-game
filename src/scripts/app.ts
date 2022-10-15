@@ -1,8 +1,9 @@
 import { calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
 import { Circle, MiniCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
-import { findGlobalPlace } from "./globalStatistic";
+import { findGlobalPlace, realtime } from "./globalStatistic";
 import { PreTimer } from "./preTimer";
+import { ref, set } from "firebase/database";
 
 const startButton = document.querySelector(".start");
 const screens = document.querySelectorAll(".screen");
@@ -77,9 +78,10 @@ function checkClick(clickCoords: { x: number, y: number }, circle: Circle): bool
   return (clickCoords.x - x) ** 2 + (clickCoords.y - y) ** 2 <= radius ** 2;
 }
 
-function checkEvent(e: (TouchEvent | PointerEvent)) {
+async function checkEvent(e: (TouchEvent | PointerEvent)) {
   const x = "touches" in e ? e.touches[0].clientX : e.clientX;
   const y = "touches" in e ? e.touches[0].clientY : e.clientY;
+  await set(ref(realtime, "event"), { x, y });
   clickOnCircle(x, y);
 }
 
