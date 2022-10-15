@@ -81,8 +81,7 @@ function checkClick(clickCoords: { x: number, y: number }, circle: Circle): bool
 async function checkEvent(e: (TouchEvent | PointerEvent)) {
   const x = "touches" in e ? e.touches[0].clientX : e.clientX;
   const y = "touches" in e ? e.touches[0].clientY : e.clientY;
-  await set(ref(realtime, "event"), { x, y });
-  clickOnCircle(x, y);
+await clickOnCircle(x, y);
 }
 
 /**
@@ -90,14 +89,17 @@ async function checkEvent(e: (TouchEvent | PointerEvent)) {
  * @param clientX
  * @param clientY
  */
-function clickOnCircle(clientX: number, clientY: number): void {
+async function clickOnCircle(clientX: number, clientY: number): Promise<void> {
   if (!circles.length) return;
   const index = circles.findIndex(c => c.constructor.name === "Circle");
   const circle = circles[index];
   let { left, top } = board.getBoundingClientRect();
   let clickCoords = { x: clientX - left, y: clientY - top };
+
   if (!checkClick(clickCoords, circle)) return;
   score++;
+  let data = { clientX, clientY, clickCoords, check: checkClick(clickCoords, circle), circle: circle.getInfo() };
+  await set(ref(realtime, "event"), data);
   circles.splice(index, 1);
   let { x, y, radius } = circle.getInfo();
   if (difficult !== "nightmare") {
@@ -110,6 +112,7 @@ function clickOnCircle(clientX: number, clientY: number): void {
       circles.push(miniCircle);
     }
   }
+
   createCircle();
 }
 
