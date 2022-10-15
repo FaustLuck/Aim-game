@@ -14,7 +14,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const realtime = getDatabase(app);
+export const realtime = getDatabase(app);
 const dbRef = ref(realtime, "aim-statistic");
 
 

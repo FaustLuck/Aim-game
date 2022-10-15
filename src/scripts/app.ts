@@ -1,8 +1,9 @@
 import { calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
 import { Circle, MiniCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
-import { findGlobalPlace } from "./globalStatistic";
+import { findGlobalPlace, realtime } from "./globalStatistic";
 import { PreTimer } from "./preTimer";
+import { ref, set } from "firebase/database";
 
 
 const startButton = document.querySelector(".start");
@@ -77,16 +78,13 @@ function checkClick(clickCoords: { x: number, y: number }, circle: Circle): bool
   return (clickCoords.x - x) ** 2 + (clickCoords.y - y) ** 2 <= radius ** 2;
 }
 
-/*
-
- */
-
-
 /**
  * "Лопает" нажатый круг
  * @param e{Event} клик на круге
  */
-function clickOnCircle(e: PointerEvent): void {
+async function clickOnCircle(e: PointerEvent): Promise<void> {
+  const dbRef = ref(realtime, "event");
+  await set(dbRef, JSON.stringify(e));
   if (!circles.length) return;
   const index = circles.findIndex(c => c.constructor.name === "Circle");
   const circle = circles[index];
