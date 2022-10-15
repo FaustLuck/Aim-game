@@ -5,13 +5,16 @@ document.addEventListener("mouseover", showTooltip);
  * @param e{Event} событие
  */
 function showTooltip(e: Event) {
+    const nightmareBtn = document.querySelector(".selected[data-difficult=\"nightmare\"]");
     const target: HTMLElement = e.target as HTMLElement;
     if (!window.matchMedia("(any-hover: hover)").matches) return;
-    if (window.matchMedia('(max-width: 480px)').matches) return;
+    if (window.matchMedia("(max-width: 480px)").matches) return;
     if (!target.getAttribute("data-tooltip")) return;
     let tooltipElem: HTMLDivElement = document.createElement("div");
     let tooltipHtml: string | null = target.getAttribute("data-tooltip");
     tooltipElem.className = "tooltip";
+    tooltipElem.setAttribute("data-color", "recolor");
+    if (nightmareBtn) tooltipElem.classList.add("nightmare");
     tooltipElem.innerHTML = tooltipHtml as string;
     document.body.append(tooltipElem);
 

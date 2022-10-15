@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css?family=Khula&display=swap');
-
 * {
   box-sizing: border-box;
 }
@@ -12,7 +10,28 @@ body {
   overflow: hidden;
   margin: 0;
   text-align: center;
+}
+
+.bg-default,
+.bg-nightmare {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  opacity: 1;
+
+  &.hide {
+    transition: opacity .25s linear .25s;
+  }
+}
+
+.bg-default {
   background: linear-gradient(90deg, #29323C 0%, #485563 100%);
+  transition: opacity .25s linear;
+}
+
+.bg-nightmare {
+  background: linear-gradient(90deg, #570000 0%, #810000 100%);
+  transition: opacity .25s linear;
 }
 
 a {
@@ -47,9 +66,14 @@ footer {
   bottom: 0;
   z-index: 10;
   width: 100%;
-  background: #1c2836;
+  background-color: #1c2836;
   box-shadow: 0px -10px 10px 4px #1c2836bf;
-  transition: bottom .5s linear;
+  transition: background-color .5s linear, box-shadow .5s linear;
+
+  &.nightmare {
+    background-color: #7a0f0f;
+    box-shadow: 0px -10px 10px 4px #7a0f0fbf;
+  }
 
   a {
     color: #6a7889;
@@ -57,10 +81,12 @@ footer {
     &:hover {
       color: #16D9E3;
     }
+
+    &.nightmare:hover {
+      color: #ff0000;
+    }
   }
 }
-
-
 
 .overlay {
   position: fixed;
@@ -78,7 +104,6 @@ footer {
     z-index: 1;
   }
 }
-
 
 .start {
   font-size: 1.5rem;
@@ -149,6 +174,11 @@ footer {
     height: auto;
   }
 
+  &.nightmare {
+    background: linear-gradient(118.38deg, #570000 -4.6%, #810000 200.44%);
+    box-shadow: -8px -8px 20px #580101, 10px 7px 20px #800000;
+  }
+
   &.open {
     display: block;
   }
@@ -211,10 +241,14 @@ footer {
   border-radius: 50%;
   background-color: #485563;
   cursor: pointer;
-  transition: opacity .5s;
+  transition: opacity .5s, background-color .5s;
   @media screen and (max-width: 768px) {
     top: calc(100vh - 6rem / 2);
     right: auto;
+  }
+
+  &.nightmare {
+    background-color: #810000;
   }
 
   &.hide {
@@ -263,7 +297,6 @@ footer {
     display: flex;
     justify-content: center;
     width: 100%;
-
   }
 }
 
@@ -285,7 +318,10 @@ footer {
     @media screen and (max-width: 480px) {
       margin-left: 0;
     }
+  }
 
+  &.nightmare {
+    background-color: #482424;
   }
 
   &.open {
@@ -293,6 +329,10 @@ footer {
     background-color: #2a333d;
     @media screen and (max-width: 480px) {
       display: none;
+    }
+
+    &.nightmare {
+      background-color: #580101;
     }
   }
 
@@ -315,6 +355,11 @@ footer {
   }
   @media screen and (max-width: 480px) {
     display: none;
+  }
+
+  &.nightmare::before,
+  &.nightmare::after {
+    background-color: #8a5353;
   }
 
   &::before,
@@ -394,6 +439,11 @@ footer {
   &.selected {
     box-shadow: #16D9E3 0 0 10px 5px, inset #16D9E3 0 0 10px 5px;
     text-shadow: #16d9e3 5px 5px 3px;
+
+    &.nightmare {
+      box-shadow: #ff0000 0 0 10px 5px, inset #ff0000 0 0 10px 5px;
+      text-shadow: #ff0000 5px 5px 3px;
+    }
   }
 
 
@@ -401,6 +451,10 @@ footer {
     @media (any-hover: hover) {
       border-color: #16D9E3;
       color: #16D9E3;
+      &.nightmare:hover {
+        border-color: rgb(255, 0, 0);
+        color: rgb(255, 0, 0);
+      }
     }
   }
 
@@ -420,7 +474,6 @@ footer {
         border-color: red;
       }
     }
-
 
     &.selected {
       box-shadow: red 0 0 10px 5px, inset red 0 0 10px 5px;
@@ -449,6 +502,11 @@ footer {
     height: 60vh;
 
   }
+
+  &.nightmare {
+    background: linear-gradient(118.38deg, #570000 -4.6%, #810000 200.44%);
+    box-shadow: -8px -8px 20px #580101, 10px 7px 20px #800000;
+  }
 }
 
 .mini-board {
@@ -458,20 +516,6 @@ footer {
 
   &.show {
     opacity: 1;
-  }
-}
-
-.circle {
-  position: absolute;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 2;
-
-
-  &.mini {
-    cursor: default;
-    z-index: 1;
-    transition: transform 1s linear;
   }
 }
 
@@ -492,7 +536,6 @@ footer {
       margin: .5rem;
     }
   }
-
 }
 
 .statistic-board {
@@ -540,7 +583,20 @@ footer {
         font-weight: 600;
       }
     }
+  }
 
+  &.nightmare > tbody > tr {
+    &:nth-of-type(2n) {
+      background-color: #360f0f;;
+    }
+
+    &:hover {
+      @media (any-hover: hover) {
+        background-color: #ff0000;
+        color: #14191e;
+        font-weight: 600;
+      }
+    }
   }
 }
 
@@ -562,7 +618,13 @@ footer {
   color: #fff;
   background: linear-gradient(118.38deg, #29323C -4.6%, #485563 200.44%);
   box-shadow: -8px -8px 20px #2a333d, 10px 7px 20px #475462;
+  transition: background-color .5s linear, box-shadow .5s linear;
   border-radius: 30px;
+
+  &.nightmare {
+    background: linear-gradient(118.38deg, #570000 -4.6%, #810000 200.44%);
+    box-shadow: -8px -8px 20px #580101, 10px 7px 20px #800000;
+  }
 }
 
 .container-preloader {

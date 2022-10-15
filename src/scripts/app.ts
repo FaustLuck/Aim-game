@@ -53,7 +53,7 @@ function saveSettings(e: Event): void {
     settingsButtons.querySelectorAll(".difficult-btn").forEach(el => el.classList.remove("selected"));
     target.classList.add("selected");
     if (target.getAttribute("data-difficult") === "nightmare") showWarning();
-    if (target.getAttribute("data-difficult") !== "nightmare") document.body.classList.remove("nightmare");
+    if (target.getAttribute("data-difficult") !== "nightmare") removeNightmare();
   }
   if (target.classList.contains("time-btn")) {
     settingsButtons.querySelectorAll(".time-btn").forEach(el => el.classList.remove("selected"));
@@ -220,7 +220,7 @@ function showScore() {
 function showWarning(): void {
   const agreementWithNightmare: string = window.localStorage.getItem("agreementWithNightmare");
   if (agreementWithNightmare === "true") {
-    document.body.classList.add("nightmare");
+    applyNightmare();
     return;
   }
   overlay.classList.add("open");
@@ -235,7 +235,34 @@ function closeWarning(): void {
   overlay.classList.remove("open");
   warningWindow.classList.remove("open");
   window.localStorage.setItem("agreementWithNightmare", "true");
-  document.body.classList.add("nightmare");
+  applyNightmare();
 }
 
+/**
+ * Применение цветов кошмара
+ */
+function applyNightmare() {
+  const bgDefault = document.querySelector(".bg-default");
+  const bgNightmare = document.querySelector(".bg-nightmare");
+  bgDefault.classList.add("hide");
+  bgNightmare.classList.remove("hide");
+  const recolorElements = document.querySelectorAll("[data-color=\"recolor\"]");
+  recolorElements.forEach((el) => {
+    el.classList.toggle("nightmare");
+  });
+}
+
+/**
+ * Возврат расцветки
+ */
+function removeNightmare() {
+  const bgDefault = document.querySelector(".bg-default");
+  const bgNightmare = document.querySelector(".bg-nightmare");
+  bgDefault.classList.remove("hide");
+  bgNightmare.classList.add("hide");
+  const recolorElements = document.querySelectorAll(".nightmare[data-color=\"recolor\"]");
+  recolorElements.forEach((el) => {
+    el.classList.toggle("nightmare");
+  });
+}
 

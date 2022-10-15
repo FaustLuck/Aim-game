@@ -17,6 +17,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./assets/icon.ico">
 </head>
 <body>
+<div class="bg-nightmare hide"></div>
+<div class="bg-default"></div>
 <div class="overlay"></div>
 <section class="screen current">
     <h1>Aim Trainer</h1>
@@ -45,34 +47,34 @@
     <h1>Выберите время</h1>
     <ul class="time-list list">
         <li>
-            <button class="time-btn btn" data-time="10">10 сек</button>
+            <button data-color="recolor" class="time-btn btn" data-time="10">10 сек</button>
         </li>
         <li>
-            <button class="time-btn btn" data-time="20">20 сек</button>
+            <button data-color="recolor" class="time-btn btn" data-time="20">20 сек</button>
         </li>
         <li>
-            <button class="time-btn btn selected" data-time="30">30 сек</button>
+            <button data-color="recolor" class="time-btn btn selected" data-time="30">30 сек</button>
         </li>
         <li>
-            <button class="time-btn btn" data-time="40">40 сек</button>
+            <button data-color="recolor" class="time-btn btn" data-time="40">40 сек</button>
         </li>
         <li>
-            <button class="time-btn btn" data-time="50">50 сек</button>
+            <button data-color="recolor" class="time-btn btn" data-time="50">50 сек</button>
         </li>
         <li>
-            <button class="time-btn btn" data-time="60">60 сек</button>
+            <button data-color="recolor" class="time-btn btn" data-time="60">60 сек</button>
         </li>
     </ul>
-    <button class="start-btn btn">Начать игру</button>
+    <button data-color="recolor" class="start-btn btn">Начать игру</button>
 </section>
 
 <section class="screen">
     <h3>Осталось <span id="time">00:00</span></h3>
-    <canvas class="board" id="board">
+    <canvas data-color="recolor" class="board" id="board">
     </canvas>
 </section>
 <section class="statistic screen-popup">
-    <div class="ledge">
+    <div data-color="recolor" class="ledge">
         <div>
             <img src="assets/table_icon.svg" alt="">
         </div>
@@ -80,12 +82,12 @@
     <div class="wrapper">
         <nav class="menu">
             <ul class="tabs">
-                <li class="tab-item open">Мой рейтинг</li>
-                <li class="tab-item">Глобальный рейтинг</li>
+                <li data-color="recolor" class="tab-item open">Мой рейтинг</li>
+                <li data-color="recolor" class="tab-item">Глобальный рейтинг</li>
             </ul>
-            <div class="close-statistic close"></div>
+            <div data-color="recolor" class="close-statistic close"></div>
         </nav>
-        <div class="statistic-info popup open">
+        <div data-color="recolor" class="statistic-info popup open">
             <div class="local-games-empty hide">
                 <div>
                     <p>Статистики Ваших игр пока нет.</p>
@@ -98,7 +100,7 @@
                     <div class="top-score"></div>
                     <div class="top-date"></div>
                 </div>
-                <table class="local-games statistic-board">
+                <table data-color="recolor" class="local-games statistic-board">
                     <thead>
                     <tr>
                         <td>Счет</td>
@@ -110,8 +112,8 @@
                 </table>
             </div>
         </div>
-        <div class="statistic-info popup">
-            <table class="global-games statistic-board">
+        <div data-color="recolor" class="statistic-info popup">
+            <table data-color="recolor" class="global-games statistic-board">
                 <thead>
                 <tr>
                     <td>Игрок</td>
@@ -165,8 +167,10 @@
         </div>
     </div>
 </section>
-<footer>
-    <span>Created by <a href="https://faustluck.github.io/MyCV/index.html" target="_blank">Grastor</a></span>
+<footer data-color="recolor">
+    <span>Created by
+        <a data-color="recolor" href="https://faustluck.github.io/MyCV/index.html" target="_blank">Grastor</a>
+    </span>
 </footer>
 </body>
 </html>

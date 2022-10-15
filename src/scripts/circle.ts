@@ -53,7 +53,7 @@ export class Circle {
       this.colors.forEach(({ color, position }) => gradient.addColorStop(position, color));
       this.context.fillStyle = gradient;
     } else {
-      this.context.fillStyle = "rgb(54 66 78)";
+      this.context.fillStyle = "rgb(111,0,0)";
     }
     this.context.beginPath();
     this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
