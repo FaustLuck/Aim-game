@@ -99,15 +99,6 @@ footer {
   width: 100vw;
   transition: margin .5s ease-out;
 
-  &.screen-board {
-    justify-content: flex-start;
-    margin-top: 3rem;
-
-    h3 {
-      margin: 0 0 .5rem 0;
-    }
-  }
-
   &.up {
     margin-top: -100vh;
   }

@@ -20,6 +20,9 @@ let timer: number;
 let circles: (Circle | MiniCircle)[] = [];
 let circleTimer: number;
 
+window.onload = () => setTimeout(() => {
+  window.scrollTo(0, 0);
+}, 0);
 startButton.addEventListener("click", e => {
   e.preventDefault();
   screens[0].classList.add("up");
