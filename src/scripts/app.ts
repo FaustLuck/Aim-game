@@ -1,10 +1,8 @@
 import { calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
 import { Circle, MiniCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
-import { findGlobalPlace, realtime } from "./globalStatistic";
+import { findGlobalPlace } from "./globalStatistic";
 import { PreTimer } from "./preTimer";
-import { ref, set } from "firebase/database";
-
 
 const startButton = document.querySelector(".start");
 const screens = document.querySelectorAll(".screen");
@@ -27,7 +25,8 @@ startButton.addEventListener("click", e => {
   screens[0].classList.add("up");
 });
 settingsButtons.addEventListener("click", saveSettings);
-board.addEventListener("pointerdown", clickOnCircle);
+board.addEventListener("pointerdown", checkEvent);
+board.addEventListener("touchstart", checkEvent);
 document.querySelector(".warning-btn").addEventListener("click", closeWarning);
 document.addEventListener("click", closePopup);
 
@@ -78,18 +77,23 @@ function checkClick(clickCoords: { x: number, y: number }, circle: Circle): bool
   return (clickCoords.x - x) ** 2 + (clickCoords.y - y) ** 2 <= radius ** 2;
 }
 
+function checkEvent(e: (TouchEvent | PointerEvent)) {
+  const x = "touches" in e ? e.touches[0].clientX : e.clientX;
+  const y = "touches" in e ? e.touches[0].clientY : e.clientY;
+  clickOnCircle(x, y);
+}
+
 /**
  * "Лопает" нажатый круг
- * @param e{Event} клик на круге
+ * @param clientX
+ * @param clientY
  */
-async function clickOnCircle(e: PointerEvent): Promise<void> {
-  const dbRef = ref(realtime, "event");
-  await set(dbRef, JSON.stringify(e));
+function clickOnCircle(clientX: number, clientY: number): void {
   if (!circles.length) return;
   const index = circles.findIndex(c => c.constructor.name === "Circle");
   const circle = circles[index];
   let { left, top } = board.getBoundingClientRect();
-  let clickCoords = { x: e.x - left, y: e.y - top };
+  let clickCoords = { x: clientX - left, y: clientY - top };
   if (!checkClick(clickCoords, circle)) return;
   score++;
   circles.splice(index, 1);
