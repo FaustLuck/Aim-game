@@ -1,9 +1,8 @@
 import { calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
 import { Circle, MiniCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
-import { findGlobalPlace, realtime } from "./globalStatistic";
+import { findGlobalPlace } from "./globalStatistic";
 import { PreTimer } from "./preTimer";
-import { ref, set } from "firebase/database";
 
 const startButton = document.querySelector(".start");
 const screens = document.querySelectorAll(".screen");
@@ -26,8 +25,7 @@ startButton.addEventListener("click", e => {
   screens[0].classList.add("up");
 });
 settingsButtons.addEventListener("click", saveSettings);
-board.addEventListener("pointerdown", checkEvent);
-board.addEventListener("touchstart", checkEvent);
+board.addEventListener("pointerdown", clickOnCircle);
 document.querySelector(".warning-btn").addEventListener("click", closeWarning);
 document.addEventListener("click", closePopup);
 
@@ -78,28 +76,18 @@ function checkClick(clickCoords: { x: number, y: number }, circle: Circle): bool
   return (clickCoords.x - x) ** 2 + (clickCoords.y - y) ** 2 <= radius ** 2;
 }
 
-async function checkEvent(e: (TouchEvent | PointerEvent)) {
-  const x = "touches" in e ? e.touches[0].clientX : e.clientX;
-  const y = "touches" in e ? e.touches[0].clientY : e.clientY;
-await clickOnCircle(x, y);
-}
-
 /**
  * "Лопает" нажатый круг
- * @param clientX
- * @param clientY
+ * @param e{Event} клик на круге
  */
-async function clickOnCircle(clientX: number, clientY: number): Promise<void> {
+function clickOnCircle(e: PointerEvent): void {
   if (!circles.length) return;
   const index = circles.findIndex(c => c.constructor.name === "Circle");
   const circle = circles[index];
   let { left, top } = board.getBoundingClientRect();
-  let clickCoords = { x: clientX - left, y: clientY - top };
-
+  let clickCoords = { x: e.clientX - left, y: e.clientY - top };
   if (!checkClick(clickCoords, circle)) return;
   score++;
-  let data = { clientX, clientY, clickCoords, check: checkClick(clickCoords, circle), circle: circle.getInfo() };
-  await set(ref(realtime, "event"), data);
   circles.splice(index, 1);
   let { x, y, radius } = circle.getInfo();
   if (difficult !== "nightmare") {
