@@ -85,7 +85,7 @@ export class Circle {
    * Координаты круга
    */
   public getInfo() {
-    return { x: this.x, y: this.y, radius: this.radius };
+    return { x: this.x, y: this.y, radius: this.radius, class: "Circle" };
   }
 }
 
@@ -130,5 +130,12 @@ export class MiniCircle extends Circle {
     this.x += this.deltaX;
     this.y += this.deltaY;
     this.radius += this.deltaRadius;
+  }
+
+  /**
+   * Координаты круга
+   */
+  public getInfo() {
+    return {radius: this.radius };
   }
 }
