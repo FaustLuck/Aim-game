@@ -136,6 +136,6 @@ export class MiniCircle extends Circle {
    * Координаты круга
    */
   public getInfo() {
-    return {radius: this.radius };
+    return { x: this.x, y: this.y, radius: this.radius, class: "Mini-Circle" };
   }
 }

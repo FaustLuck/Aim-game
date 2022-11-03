@@ -100,15 +100,10 @@ function checkClick(clickCoords: { x: number, y: number }, circle: Circle): bool
  */
 function clickOnCircle(e: PointerEvent): void {
   if (!circles.length) return;
-  const index = circles.findIndex(c => c.constructor.name === "Circle");
+  const index = circles.findIndex(c => c.getInfo().class === "Circle");
   const circle = circles[index];
   let { left, top } = board.getBoundingClientRect();
   let clickCoords = { x: e.clientX - left, y: e.clientY - top };
-  console.log('clickOnCircle')
-  console.log(circles)
-  console.log(index)
-  console.log(circle)
-  console.log(circle.getInfo())
   if (!checkClick(clickCoords, circle)) return;
   score++;
   circles.splice(index, 1);
