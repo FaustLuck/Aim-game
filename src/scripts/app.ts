@@ -163,9 +163,6 @@ function animate(): void {
   context.clearRect(0, 0, board.width, board.height);
   circles = circles.filter(c => {
     c.draw();
-    console.log('animate')
-    console.log(c)
-    console.log(c.getInfo())
     const { radius } = c.getInfo();
     return radius > 0;
   });
