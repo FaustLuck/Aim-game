@@ -87,6 +87,9 @@ function changeSlide(tarIndex: number, curIndex: number): void {
  * @return
  */
 function checkClick(clickCoords: { x: number, y: number }, circle: Circle): boolean {
+  console.log('checkClick')
+  console.log(circle)
+  console.log(circle.getInfo())
   let { x, y, radius } = circle.getInfo();
   return (clickCoords.x - x) ** 2 + (clickCoords.y - y) ** 2 <= radius ** 2;
 }
@@ -104,6 +107,9 @@ function clickOnCircle(e: PointerEvent): void {
   if (!checkClick(clickCoords, circle)) return;
   score++;
   circles.splice(index, 1);
+  console.log('clickOnCircle')
+  console.log(circle)
+  console.log(circle.getInfo())
   let { x, y, radius } = circle.getInfo();
   if (difficult !== "nightmare") {
     let { min, max } = difficultSettings.find(el => el.difficult === difficult);
@@ -157,6 +163,9 @@ function animate(): void {
   context.clearRect(0, 0, board.width, board.height);
   circles = circles.filter(c => {
     c.draw();
+    console.log('animate')
+    console.log(c)
+    console.log(c.getInfo())
     const { radius } = c.getInfo();
     return radius > 0;
   });
