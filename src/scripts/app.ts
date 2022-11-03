@@ -104,12 +104,14 @@ function clickOnCircle(e: PointerEvent): void {
   const circle = circles[index];
   let { left, top } = board.getBoundingClientRect();
   let clickCoords = { x: e.clientX - left, y: e.clientY - top };
+  console.log('clickOnCircle')
+  console.log(circles)
+  console.log(index)
+  console.log(circle)
+  console.log(circle.getInfo())
   if (!checkClick(clickCoords, circle)) return;
   score++;
   circles.splice(index, 1);
-  console.log('clickOnCircle')
-  console.log(circle)
-  console.log(circle.getInfo())
   let { x, y, radius } = circle.getInfo();
   if (difficult !== "nightmare") {
     let { min, max } = difficultSettings.find(el => el.difficult === difficult);
