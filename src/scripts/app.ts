@@ -87,9 +87,6 @@ function changeSlide(tarIndex: number, curIndex: number): void {
  * @return
  */
 function checkClick(clickCoords: { x: number, y: number }, circle: Circle): boolean {
-  console.log('checkClick')
-  console.log(circle)
-  console.log(circle.getInfo())
   let { x, y, radius } = circle.getInfo();
   return (clickCoords.x - x) ** 2 + (clickCoords.y - y) ** 2 <= radius ** 2;
 }
