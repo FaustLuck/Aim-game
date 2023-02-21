@@ -1,22 +1,4 @@
-import { createRecordStatistic, fillTable, overlay, statisticRecordType } from "./utils";
-import { initializeApp } from "firebase/app";
-import { getDatabase, onValue, ref, set } from "firebase/database";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCukmuh4VplvLpM3XQzlkGCuyGgX7x2y18",
-  authDomain: "grastor-messagestorage.firebaseapp.com",
-  databaseURL: "https://grastor-messagestorage-default-rtdb.firebaseio.com",
-  projectId: "grastor-messagestorage",
-  storageBucket: "grastor-messagestorage.appspot.com",
-  messagingSenderId: "189811633204",
-  appId: "1:189811633204:web:cddbbdee2964375bd86e61",
-  measurementId: "G-G4SXGQZLE1"
-};
-
-const app = initializeApp(firebaseConfig);
-export const realtime = getDatabase(app);
-const dbRef = ref(realtime, "aim-statistic");
-
+import { createRecordStatistic, fillTable, overlay, request, statisticRecordType } from "./utils";
 
 const globalStatisticTable = document.querySelector(".global-games.statistic-board").querySelector("tbody");
 const congratulationWindow = document.querySelector(".congratulation.screen-popup");
@@ -46,7 +28,7 @@ export function findGlobalPlace(score: number): void {
 }
 
 /**
- * Проверяет заполенено ли поле
+ * Проверяет заполнено ли поле
  */
 function nameIsEmpty(): void {
   let value = inputName.value.trim();
@@ -60,14 +42,12 @@ function nameIsEmpty(): void {
  * @returns {Promise<void>} результат записи
  */
 async function setGlobalStatistic(player: string): Promise<void> {
-  globalStatistic.splice(index, 0, createRecordStatistic(currentScore, player));
-  if (globalStatistic.length > 10) --globalStatistic.length;
-  set(dbRef, globalStatistic).then(() => {
-    setSpinner.style.display = "none";
-    doneBlock.style.display = "block";
-    setTimeout(hideCongratulation, 1000);
-    fillTable(globalStatisticTable, globalStatistic);
-  });
+  const record = createRecordStatistic(currentScore, player);
+  await request("setAimPlace", { record });
+  await getGlobalStatistic();
+  doneBlock.style.display = "block";
+  setSpinner.style.display = "none";
+  setTimeout(hideCongratulation, 1000);
 }
 
 /**
@@ -94,13 +74,11 @@ function hideCongratulation(): void {
 }
 
 /**
- * Запрос данных в firebase-database
+ * Запрос данных из БД
  */
-export function getGlobalStatistic(): void {
-  onValue(dbRef, snapshot => {
-    globalStatistic = snapshot.val();
-    if (globalStatistic.length) fillTable(globalStatisticTable, globalStatistic);
-  });
+export async function getGlobalStatistic(): Promise<void> {
+  globalStatistic = await request("getAimStatistic", null, "GET");
+  fillTable(globalStatisticTable, globalStatistic);
 }
 
 /**
@@ -115,9 +93,9 @@ async function getConsent(e: Event) {
   agreement = target.getAttribute("data-agree") === "true";
   const player: string = inputName.value.trim();
   if (agreement && player.length > 0) {
-    await setGlobalStatistic(player);
     infoBlock.style.display = "none";
-    setSpinner.style.display = "block ";
+    setSpinner.style.display = "block";
+    await setGlobalStatistic(player);
   } else {
     setTimeout(hideCongratulation, 1000);
     infoBlock.style.display = "none";

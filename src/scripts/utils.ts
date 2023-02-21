@@ -1,16 +1,15 @@
 export const overlay: HTMLDivElement = document.querySelector(".overlay");
 export type statisticRecordType = { date: number, score: number, player: string }
 
-export type difficultSettingsRecord =  {difficult: string, min: number, max: number, coefficient: number }
-export const difficultSettings: difficultSettingsRecord[] = [
-  { difficult: "easy", min: 30, max: 40, coefficient: 1 },
-  { difficult: "medium", min: 20, max: 30, coefficient: 3 },
-  { difficult: "hard", min: 10, max: 20, coefficient: 6 },
-  { difficult: "nightmare", min: 5, max: 8, coefficient: 10 }
-];
+export type difficultSettingsRecord = { difficult: string, min: number, max: number, coefficient: number }
+export let difficultSettings: difficultSettingsRecord[];
+
+export async function getSettings() {
+  difficultSettings = await request("getAimSettings", null, "GET");
+}
 
 /**
- * Преобразование таймстампа к дате
+ * Преобразование таймштампа к дате
  * @param timestamp {Number}
  * @returns {string} дата вида ДД.ММ.ГГГГ
  */
@@ -100,4 +99,22 @@ export function getRandomColor(): string {
 export function applyingDifficult(difficult: string): number {
   let param: number = difficultSettings.findIndex(el => el.difficult === difficult);
   return getRandomNumber(difficultSettings[param].min, difficultSettings[param].max);
+}
+
+/**
+ *
+ */
+export async function request(path: string, data: any, method = "POST") {
+  if (data === "") data = {};
+  const body = (method === "POST") ? JSON.stringify(data) : null;
+  const response = await fetch(`https://englishspace-1-g1233964.deta.app/${path}`, {
+    headers: { "Content-Type": "application/json" },
+    method,
+    body
+  });
+  if (response.ok) {
+    return await response.json();
+  } else {
+    return false;
+  }
 }

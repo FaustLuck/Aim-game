@@ -1,4 +1,4 @@
-import { calculateScore, difficultSettings, getRandomNumber, overlay } from "./utils";
+import { calculateScore, difficultSettings, getRandomNumber, overlay, getSettings } from "./utils";
 import { Circle, MiniCircle } from "./circle";
 import { setLocalStatistic } from "./localStatistic";
 import { findGlobalPlace } from "./globalStatistic";
@@ -19,6 +19,8 @@ let score: number = 0;
 let timer: number;
 let circles: (Circle | MiniCircle)[] = [];
 let circleTimer: number;
+
+window.onload = getSettings;
 
 startButton.addEventListener("click", e => {
   e.preventDefault();
@@ -134,6 +136,7 @@ function createCircle() {
  * На основании выбранных настроек начинает игру
  */
 function startGame(): void {
+  circles=[];
   context.clearRect(0, 0, board.width, board.height);
   ({ width: board.width, height: board.height } = board.getBoundingClientRect());
   difficult = document.querySelector(".difficult-btn.selected")?.getAttribute("data-difficult");
@@ -185,7 +188,7 @@ function setTime(value: number): void {
  */
 function finishGame(): void {
   clearInterval(timer);
-  circles.length = 0;
+  circles=null
   context.clearRect(0, 0, board.width, board.height);
   let parentNode: HTMLElement = timeEl.parentNode as HTMLHeadingElement;
   parentNode.classList.add("hide");
