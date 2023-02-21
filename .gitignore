@@ -1,5 +1,4 @@
 node_modules
-bucket
 *.txt
 
 # local env files
