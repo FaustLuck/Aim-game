@@ -43,7 +43,7 @@ function nameIsEmpty(): void {
  */
 async function setGlobalStatistic(player: string): Promise<void> {
   const record = createRecordStatistic(currentScore, player);
-  await request("setAimPlace", { record });
+  await request("/place", { record });
   await getGlobalStatistic();
   doneBlock.style.display = "block";
   setSpinner.style.display = "none";
@@ -77,7 +77,7 @@ function hideCongratulation(): void {
  * Запрос данных из БД
  */
 export async function getGlobalStatistic(): Promise<void> {
-  globalStatistic = await request("getAimStatistic", null, "GET");
+  globalStatistic = await request("/statistic", null, "GET");
   fillTable(globalStatisticTable, globalStatistic);
 }
 

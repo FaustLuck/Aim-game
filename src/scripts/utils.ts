@@ -5,7 +5,7 @@ export type difficultSettingsRecord = { difficult: string, min: number, max: num
 export let difficultSettings: difficultSettingsRecord[];
 
 export async function getSettings() {
-  difficultSettings = await request("getAimSettings", null, "GET");
+  difficultSettings = await request("/settings", null, "GET");
 }
 
 /**
@@ -107,7 +107,7 @@ export function applyingDifficult(difficult: string): number {
 export async function request(path: string, data: any, method = "POST") {
   if (data === "") data = {};
   const body = (method === "POST") ? JSON.stringify(data) : null;
-  const response = await fetch(`https://englishspace-1-g1233964.deta.app/${path}`, {
+  const response = await fetch(`https://englishspace-1-g1233964.deta.app/aim${path}`, {
     headers: { "Content-Type": "application/json" },
     method,
     body
