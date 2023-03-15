@@ -113,7 +113,12 @@ export async function request(path: string, data: any, method = "POST") {
     body
   });
   if (response.ok) {
-    return await response.json();
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+      return await response.json();
+    } else {
+      return true;
+    }
   } else {
     return false;
   }
