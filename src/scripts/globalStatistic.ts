@@ -1,4 +1,4 @@
-import { createRecordStatistic, fillTable, overlay, request, statisticRecordType } from "./utils";
+import { createRecordStatistic, fillTable, overlay, statisticRecordType } from "./utils";
 
 const globalStatisticTable = document.querySelector(".global-games.statistic-board").querySelector("tbody");
 const congratulationWindow = document.querySelector(".congratulation.screen-popup");
@@ -43,11 +43,19 @@ function nameIsEmpty(): void {
  */
 async function setGlobalStatistic(player: string): Promise<void> {
   const record = createRecordStatistic(currentScore, player);
-  await request("/place", { record });
+  await updateStatistic(record);
   await getGlobalStatistic();
   doneBlock.style.display = "block";
   setSpinner.style.display = "none";
   setTimeout(hideCongratulation, 1000);
+}
+
+async function updateStatistic(record: statisticRecordType) {
+  fetch("https://englishspace-1-g1233964.deta.app/aim/place", {
+    headers: { "Content-Type": "application/json" },
+    method: "POST",
+    body: JSON.stringify(record)
+  });
 }
 
 /**
@@ -77,7 +85,8 @@ function hideCongratulation(): void {
  * Запрос данных из БД
  */
 export async function getGlobalStatistic(): Promise<void> {
-  globalStatistic = await request("/statistic", null, "GET");
+  const response = await fetch("https://englishspace-1-g1233964.deta.app/aim/statistic");
+  if (response.ok) globalStatistic = await response.json();
   fillTable(globalStatisticTable, globalStatistic);
 }
 

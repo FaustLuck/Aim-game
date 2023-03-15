@@ -5,7 +5,8 @@ export type difficultSettingsRecord = { difficult: string, min: number, max: num
 export let difficultSettings: difficultSettingsRecord[];
 
 export async function getSettings() {
-  difficultSettings = await request("/settings", null, "GET");
+  const response = await fetch("https://englishspace-1-g1233964.deta.app/aim/settings");
+  if (response.ok) difficultSettings = await response.json();
 }
 
 /**
@@ -99,27 +100,4 @@ export function getRandomColor(): string {
 export function applyingDifficult(difficult: string): number {
   let param: number = difficultSettings.findIndex(el => el.difficult === difficult);
   return getRandomNumber(difficultSettings[param].min, difficultSettings[param].max);
-}
-
-/**
- *
- */
-export async function request(path: string, data: any, method = "POST") {
-  if (data === "") data = {};
-  const body = (method === "POST") ? JSON.stringify(data) : null;
-  const response = await fetch(`https://englishspace-1-g1233964.deta.app/aim${path}`, {
-    headers: { "Content-Type": "application/json" },
-    method,
-    body
-  });
-  if (response.ok) {
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.indexOf("application/json") !== -1) {
-      return await response.json();
-    } else {
-      return true;
-    }
-  } else {
-    return false;
-  }
 }
